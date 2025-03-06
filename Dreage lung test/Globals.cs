@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Dredge_lung_test;
 
 public delegate void PassFish(Fish fish);
-public delegate object PassAndReturnObject(object obj);
+public delegate object PassAndReturnFish(object obj);
 public static class Globals
 {
     public static PassFish passFish;
