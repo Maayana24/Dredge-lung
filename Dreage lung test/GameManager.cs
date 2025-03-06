@@ -65,8 +65,8 @@ namespace Dredge_lung_test
         private void OnFishCaptured(Fish fish)
         {
             // Add to score when a fish is photographed
-            _score += (int)fish.Value;
-            _ui.UpdateScore(_score);
+        //    _score += (int)fish.Value;
+           // _ui.UpdateScore(_score);
 
             // Show fish info UI
             ShowFishInfo(fish);

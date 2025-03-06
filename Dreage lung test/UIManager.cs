@@ -20,7 +20,7 @@ namespace Dredge_lung_test
             _uiElements.Add(_frame = new(IM.MousePosition, _fishes));
         }
 
-        public void SetUpUI()
+        public void SetUpUI(Action<Fish> fish)
         {
 
             AddButton(new(90, 50), Globals.Content.Load<Texture2D>("UI/cameraIcon"), () =>
