@@ -8,7 +8,7 @@ namespace Dredge_lung_test
     {
         private readonly BGM _bgm = new();
         private readonly Player _player;
-        private List<Fish> _fishes;
+        private List<Fish> _fishes = new List<Fish>();
         private readonly UIManager _ui;
         private readonly Fish normal = new Angler(new Vector2(500, 500));
 
@@ -22,6 +22,8 @@ namespace Dredge_lung_test
             _bgm.AddLayer(new Layer(LoadAndRotateTexture("9"), 0.5f, 0.4f));
 
             _player = new(Globals.Content.Load<Texture2D>("submarine"), new(300, 300));
+
+            _fishes.Add(normal);
 
             _ui = new(_fishes);
 

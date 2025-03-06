@@ -15,6 +15,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI Classes", "UI Classes", "{EFAE9985-FD1F-4AA5-9B03-67B7A0A2EF00}"
 	ProjectSection(SolutionItems) = preProject
 		Dreage lung test\Button.cs = Dreage lung test\Button.cs
+		Dreage lung test\CameraFrame.cs = Dreage lung test\CameraFrame.cs
 		Dreage lung test\UIElement.cs = Dreage lung test\UIElement.cs
 	EndProjectSection
 EndProject
