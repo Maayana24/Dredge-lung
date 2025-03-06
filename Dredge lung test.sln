@@ -1,0 +1,75 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dredge lung test", "Dreage lung test\Dredge lung test.csproj", "{75730E15-31B8-45F9-A329-F1C9A6A5712D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dredge Lung", "Dredge Lung", "{E665BBD4-633C-4F1C-A46A-DC6AC769596F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interfaces", "Interfaces", "{CA3889FB-25E7-46BE-B53F-65B768CE306E}"
+	ProjectSection(SolutionItems) = preProject
+		Dreage lung test\IClickable.cs = Dreage lung test\IClickable.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI Classes", "UI Classes", "{EFAE9985-FD1F-4AA5-9B03-67B7A0A2EF00}"
+	ProjectSection(SolutionItems) = preProject
+		Dreage lung test\Button.cs = Dreage lung test\Button.cs
+		Dreage lung test\UIElement.cs = Dreage lung test\UIElement.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Main", "Main", "{08DB0E47-862E-4FA4-8BE9-DE6AA8513B46}"
+	ProjectSection(SolutionItems) = preProject
+		Dreage lung test\Game1.cs = Dreage lung test\Game1.cs
+		Dreage lung test\Globals.cs = Dreage lung test\Globals.cs
+		Dreage lung test\Player.cs = Dreage lung test\Player.cs
+		Dreage lung test\Program.cs = Dreage lung test\Program.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Managers", "Managers", "{B62AB3E7-302A-4D04-9192-ACB52933782B}"
+	ProjectSection(SolutionItems) = preProject
+		Dreage lung test\BGM.cs = Dreage lung test\BGM.cs
+		Dreage lung test\GameManager.cs = Dreage lung test\GameManager.cs
+		Dreage lung test\IM.cs = Dreage lung test\IM.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{91899F17-79E8-4B3F-B9E8-66ADE02BB71C}"
+	ProjectSection(SolutionItems) = preProject
+		Dreage lung test\Fish.cs = Dreage lung test\Fish.cs
+		Dreage lung test\Layer.cs = Dreage lung test\Layer.cs
+		Dreage lung test\Sprite.cs = Dreage lung test\Sprite.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Fish", "Fish", "{E2C49FD0-18D2-44BA-A2A6-4785863FDC3D}"
+	ProjectSection(SolutionItems) = preProject
+		Dreage lung test\Angler.cs = Dreage lung test\Angler.cs
+		Dreage lung test\Eel.cs = Dreage lung test\Eel.cs
+		Dreage lung test\Jelly.cs = Dreage lung test\Jelly.cs
+		Dreage lung test\Normal.cs = Dreage lung test\Normal.cs
+		Dreage lung test\Shark.cs = Dreage lung test\Shark.cs
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{75730E15-31B8-45F9-A329-F1C9A6A5712D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75730E15-31B8-45F9-A329-F1C9A6A5712D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75730E15-31B8-45F9-A329-F1C9A6A5712D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75730E15-31B8-45F9-A329-F1C9A6A5712D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{75730E15-31B8-45F9-A329-F1C9A6A5712D} = {E665BBD4-633C-4F1C-A46A-DC6AC769596F}
+		{CA3889FB-25E7-46BE-B53F-65B768CE306E} = {E665BBD4-633C-4F1C-A46A-DC6AC769596F}
+		{EFAE9985-FD1F-4AA5-9B03-67B7A0A2EF00} = {E665BBD4-633C-4F1C-A46A-DC6AC769596F}
+		{08DB0E47-862E-4FA4-8BE9-DE6AA8513B46} = {E665BBD4-633C-4F1C-A46A-DC6AC769596F}
+		{B62AB3E7-302A-4D04-9192-ACB52933782B} = {E665BBD4-633C-4F1C-A46A-DC6AC769596F}
+		{91899F17-79E8-4B3F-B9E8-66ADE02BB71C} = {E665BBD4-633C-4F1C-A46A-DC6AC769596F}
+		{E2C49FD0-18D2-44BA-A2A6-4785863FDC3D} = {E665BBD4-633C-4F1C-A46A-DC6AC769596F}
+	EndGlobalSection
+EndGlobal
