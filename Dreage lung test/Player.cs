@@ -16,7 +16,7 @@ namespace Dredge_lung_test
             Scale = new Vector2(0.3f, 0.3f);
         }
 
-        public void Update()
+        public override void Update()
         {
             if(IM.Direction != Vector2.Zero)
             {
@@ -52,5 +52,6 @@ namespace Dredge_lung_test
         {
             spriteBatch.Draw(Texture, Position, null, Color.White, 0, Vector2.Zero, Scale, SpriteEffects.None, 0.9f);
         }
+
     }
 }

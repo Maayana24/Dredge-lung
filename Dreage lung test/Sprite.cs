@@ -32,6 +32,8 @@ namespace Dredge_lung_test
 
             Direction = new Vector2(1, 0);
         }
+
+        public abstract void Update();
         public virtual void Draw()
         {
             Globals.SpriteBatch.Draw(Texture, Position, Bounds, Color.White, 0, Origin, Scale, SpriteEffect, 1); 
