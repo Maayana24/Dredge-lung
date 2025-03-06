@@ -9,7 +9,6 @@ namespace Dredge_lung_test
         protected readonly Texture2D Texture;
         protected readonly Vector2 Origin;
 
-        // Use properties with private setters for better control
         public Vector2 Position { get; protected set; }
         public Vector2 Direction { get; protected set; }
         public float Speed { get; protected set; }
