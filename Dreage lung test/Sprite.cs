@@ -25,7 +25,9 @@ namespace Dredge_lung_test
             Origin = new Vector2(texture.Width / 2f, texture.Height / 2f);
 
             Bounds = new Rectangle(0, 0, texture.Width, texture.Height);
-            SpriteEffect = isMirrored ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            SpriteEffect = isMirrored
+                ? SpriteEffects.FlipHorizontally
+                : SpriteEffects.None;
 
             Direction = new Vector2(1, 0);
         }

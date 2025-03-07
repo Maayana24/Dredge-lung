@@ -2,7 +2,7 @@
 
 namespace Dredge_lung_test
 {
-    internal class Grouper : Fish
+    public class Grouper : Fish
     {
 
         public Grouper(Vector2 position) : base(position)

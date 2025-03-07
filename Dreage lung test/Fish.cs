@@ -14,7 +14,7 @@ namespace Dredge_lung_test
             // Each fish type will have its own texture
         }
 
-        public virtual void Update()
+        public override void Update()
         {
             Movement();
 
