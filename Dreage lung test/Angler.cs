@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Dredge_lung_test
 {
@@ -6,13 +7,13 @@ namespace Dredge_lung_test
     {
         public Angler(Vector2 position) : base(position)
         {
-            Bounds = new Rectangle(550, 0, 700, 300);
-            Scale = new Vector2(0.5f, 0.5f);
-        }
+            // Set source rectangle for the Angler fish on the sprite sheet
+            SourceRect = new Rectangle(550, 0, 700, 300);
 
-        public override void Movement()
-        {
-            base.Movement();
+            // Set properties
+            Speed = 180.0f;
+            Scale = new Vector2(0.5f, 0.5f);
         }
     }
 }
+

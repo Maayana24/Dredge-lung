@@ -10,8 +10,8 @@ namespace Dredge_lung_test
         private readonly List<Fish> _activeFishes;
         private readonly Random _random;
         private float _spawnTimer;
-        private readonly float _minSpawnTime = 1.0f; // Minimum time between spawns
-        private readonly float _maxSpawnTime = 3.0f; // Maximum time between spawns
+        private readonly float _minSpawnTime = 3.0f; // Minimum time between spawns
+        private readonly float _maxSpawnTime = 5.0f; // Maximum time between spawns
         private float _nextSpawnTime;
 
         private readonly int _screenWidth;
@@ -52,7 +52,7 @@ namespace Dredge_lung_test
         private void SpawnRandomFish()
         {
             // 1 in 5 chance to spawn a Jelly (bottom to top)
-            bool spawnJelly = _random.Next(5) == 0;
+            bool spawnJelly = _random.Next(15) == 0;
 
             if (spawnJelly)
             {
@@ -64,7 +64,7 @@ namespace Dredge_lung_test
                 int fishType = _random.Next(4);
                 bool moveLeftToRight = _random.Next(2) == 0; // 50% chance for each direction
 
-                SpawnHorizontalFish(fishType, moveLeftToRight);
+                SpawnFish(fishType, moveLeftToRight);
             }
         }
 
@@ -78,7 +78,7 @@ namespace Dredge_lung_test
             _activeFishes.Add(jelly);
         }
 
-        private void SpawnHorizontalFish(int fishType, bool moveLeftToRight)
+        private void SpawnFish(int fishType, bool moveLeftToRight)
         {
             // Set starting position based on direction (off-screen)
             float xPos = moveLeftToRight ? -100 : _screenWidth + 100;

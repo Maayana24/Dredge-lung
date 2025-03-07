@@ -45,8 +45,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Fish", "Fish", "{E2C49FD0-1
 	ProjectSection(SolutionItems) = preProject
 		Dreage lung test\Angler.cs = Dreage lung test\Angler.cs
 		Dreage lung test\Eel.cs = Dreage lung test\Eel.cs
+		Dreage lung test\Grouper.cs = Dreage lung test\Grouper.cs
 		Dreage lung test\Jelly.cs = Dreage lung test\Jelly.cs
-		Dreage lung test\Normal.cs = Dreage lung test\Normal.cs
 		Dreage lung test\Shark.cs = Dreage lung test\Shark.cs
 	EndProjectSection
 EndProject

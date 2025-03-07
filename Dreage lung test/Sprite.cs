@@ -15,6 +15,9 @@ namespace Dredge_lung_test
         public Vector2 Scale { get; protected set; } = Vector2.One;
         public Rectangle Bounds { get; protected set; }
         public SpriteEffects SpriteEffect { get; protected set; }
+        public float Rotation { get; set; } = 0f;
+        public Color Color { get; set; } = Color.White;
+        public float LayerDepth { get; set; } = 0f;
 
         public Sprite(Texture2D texture, Vector2 position, float speed = 300f, bool isMirrored = false)
         {
@@ -38,3 +41,4 @@ namespace Dredge_lung_test
 
     }
 }
+

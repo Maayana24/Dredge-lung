@@ -6,14 +6,15 @@ namespace Dredge_lung_test
     {
         public Jelly(Vector2 position) : base(position)
         {
-            Bounds = new Rectangle(0, 200, 400, 350);
+            // Set source rectangle for the Jelly fish on the sprite sheet
+            SourceRect = new Rectangle(0, 200, 400, 350);
+
+            // Set properties
+            Speed = 120.0f;
             Scale = new Vector2(0.5f, 0.5f);
 
-        }
-
-        public override void Movement()
-        {
-            base.Movement();
+            // Set vertical movement direction
+            Direction = new Vector2(0, -1);
         }
     }
 }
