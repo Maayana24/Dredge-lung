@@ -38,7 +38,6 @@ namespace Dredge_lung_test
 
             // TODO: use this.Content to load your game content here
             _gm = new();
-
         }
 
         protected override void Update(GameTime gameTime)

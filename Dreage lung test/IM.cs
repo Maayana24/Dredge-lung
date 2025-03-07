@@ -9,6 +9,7 @@ namespace Dredge_lung_test
         public static Vector2 Direction => _direction;
 
         private static Vector2 _directionArrows;
+
         public static Vector2 DirectionArrows => _directionArrows;
         public static Vector2 MousePosition => Mouse.GetState().Position.ToVector2();
 

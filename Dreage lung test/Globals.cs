@@ -19,5 +19,4 @@ public static class Globals
     {
         DeltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
     }
-
 }
