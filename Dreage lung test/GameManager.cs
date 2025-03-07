@@ -10,7 +10,7 @@ namespace Dredge_lung_test
         private readonly Player _player;
         private List<Fish> _fishes = new List<Fish>();
         private readonly UIManager _ui;
-        private readonly Fish normal = new Angler(new Vector2(500, 500));
+        private readonly Fish Grouper = new Angler(new Vector2(500, 500));
 
         public GameManager()
         {
@@ -23,7 +23,7 @@ namespace Dredge_lung_test
 
             _player = new(Globals.Content.Load<Texture2D>("submarine"), new(300, 300));
 
-            _fishes.Add(normal);
+            _fishes.Add(Grouper);
 
             _ui = new(_fishes);
 
@@ -36,7 +36,7 @@ namespace Dredge_lung_test
             IM.Update();
             _bgm.Update(-200);
             _player.Update();
-            normal.Update();
+            Grouper.Update();
         }
 
         public void Draw()
@@ -44,7 +44,7 @@ namespace Dredge_lung_test
             _bgm.Draw();
             _player.Draw();
             _ui.Draw();
-            normal.Draw();
+            Grouper.Draw();
 
 
         }

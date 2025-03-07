@@ -20,7 +20,7 @@ namespace Dredge_lung_test
         {
             if(IM.Direction != Vector2.Zero)
             {
-                Direction = Vector2.Normalize(IM.Direction);
+                Direction = Vector2.Grouperize(IM.Direction);
                // position += dir * speed * Globals.TotalSeconds;
                 _velocity += Direction * Speed * Globals.DeltaTime;
                 _acceleration.X = Speed;
@@ -30,7 +30,7 @@ namespace Dredge_lung_test
                 Vector2 friction = _velocity;
                 if(friction.Length() > 0)
                 {
-                    friction.Normalize();
+                    friction.Grouperize();
                     friction *= Speed / 2 * Globals.DeltaTime;
                     _velocity -= friction;
 

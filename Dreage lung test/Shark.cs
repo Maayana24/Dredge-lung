@@ -18,7 +18,7 @@ namespace Dredge_lung_test
         public override void Draw()
         {
             base.Draw();
-            System.Diagnostics.Debug.WriteLine($"Normal fish texture: {Texture?.Width}x{Texture?.Height}");
+            System.Diagnostics.Debug.WriteLine($"Grouper fish texture: {Texture?.Width}x{Texture?.Height}");
 
         }
     }

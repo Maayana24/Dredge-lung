@@ -2,16 +2,14 @@
 
 namespace Dredge_lung_test
 {
-    internal class Normal : Fish
+    internal class Grouper : Fish
     {
 
-
-        public Normal(Vector2 position) : base(position)
+        public Grouper(Vector2 position) : base(position)
         {
             Bounds = new Rectangle(200, 50, 300, 150);
 
         }
-
 
         public override void Movement()
         {
@@ -21,7 +19,7 @@ namespace Dredge_lung_test
         public override void Draw()
         {
             base.Draw();
-           // System.Diagnostics.Debug.WriteLine($"Normal fish texture: {Texture?.Width}x{Texture?.Height}");
+           // System.Diagnostics.Debug.WriteLine($"Grouper fish texture: {Texture?.Width}x{Texture?.Height}");
 
         }
     }
