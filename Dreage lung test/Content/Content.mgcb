@@ -121,19 +121,14 @@
 /processorParam:TextureFormat=Color
 /build:Background/9.png
 
-#begin ballmono.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
+#begin DefultFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:ballmono.png
+/processorParam:TextureFormat=Compressed
+/build:DefultFont.spritefont
 
-#begin CaveTest.png
+#begin Fish/inflammation.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -143,7 +138,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:CaveTest.png
+/build:Fish/inflammation.png
 
 #begin Fish1.png
 /importer:TextureImporter
@@ -156,18 +151,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Fish1.png
-
-#begin FishTemplate.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:FishTemplate.png
 
 #begin submarine.png
 /importer:TextureImporter
@@ -204,4 +187,28 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:UI/cameraIcon.png
+
+#begin UI/DButton.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:UI/DButton.png
+
+#begin UI/InspectionBG.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:UI/InspectionBG.png
 

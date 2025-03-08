@@ -10,20 +10,21 @@ namespace Dredge_lung_test
         private Rectangle _bounds;
         private List<Fish> _fishes;
         private List<Fish> _detectedFish = new List<Fish>();
+        private GameManager _gameManager;
 
-        public CameraFrame(Vector2 position, List<Fish> fishes) : base(Globals.Content.Load<Texture2D>("UI/CameraFrame"), position)
+        public CameraFrame(Vector2 position, List<Fish> fishes, GameManager gameManager) : base(Globals.Content.Load<Texture2D>("UI/CameraFrame"), position)
         {
             Origin = new Vector2(Texture.Width / 2f, Texture.Height / 2f);
             Scale = new Vector2(0.5f, 0.5f);
             _bounds = new(0, 0, Texture.Width, Texture.Height);
             IsVisible = false;
             _fishes = fishes;
+            _gameManager = gameManager;
         }
 
         public override void Update()
         {
             Position = IM.MousePosition;
-
             _detectedFish.Clear();
 
             if (IsVisible)
@@ -47,18 +48,15 @@ namespace Dredge_lung_test
         {
             if (IsVisible && _detectedFish.Count > 0)
             {
-                // Implement what happens when a fish is caught
+                // Open the inspection screen for the first detected fish
+                // In a more complex implementation, you might want to handle multiple fish differently
+                Fish selectedFish = _detectedFish[0];
 
-                System.Diagnostics.Debug.WriteLine($"Captured {_detectedFish.Count} fish!");
+                // Open the fish inspection screen
+                _gameManager.InspectFish(selectedFish);
 
-                foreach (var fish in _detectedFish)
-                {
-                    // Do something with each detected fish
-                    System.Diagnostics.Debug.WriteLine($"Captured fish at position {fish.Position}");
-                }
-
-                // Optionally hide the camera frame after capturing
-                // IsVisible = false;
+                // Hide the camera frame after capturing
+                IsVisible = false;
             }
         }
 
@@ -71,7 +69,6 @@ namespace Dredge_lung_test
                 (int)(Texture.Width * Scale.X),
                 (int)(Texture.Height * Scale.Y)
             );
-
             return frameBounds.Intersects(fish.Bounds);
         }
 

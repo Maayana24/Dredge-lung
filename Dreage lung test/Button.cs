@@ -9,10 +9,11 @@ namespace Dredge_lung_test
         private readonly Rectangle _bounds;
         private readonly Action _onClick;
 
-        public Button(Vector2 position, Texture2D texture, Action onClick) : base(texture, position)
+        public Button(Vector2 position, Texture2D texture, Action onClick, Color color) : base(texture, position)
         {
             _bounds = new Rectangle((int)Position.X, (int)Position.Y, texture.Width, texture.Height);
             _onClick = onClick;
+            _shade = color;
         }
 
         public override void Update()

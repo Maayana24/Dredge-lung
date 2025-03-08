@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 
 namespace Dredge_lung_test
 {
+    // Enum to represent all possible anomaly types
     public enum AnomalyType
     {
         ExtraLimbs,

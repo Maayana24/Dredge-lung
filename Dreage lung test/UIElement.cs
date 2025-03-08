@@ -5,13 +5,13 @@ namespace Dredge_lung_test
 {
     public abstract class UIElement
     {
-        protected Vector2 Position { get;  set; }
+        public Vector2 Position { get;  set; }
         public Vector2 Scale { get; set; } = Vector2.One;
         public bool IsVisible { get; set; } = true;
 
         protected const float UILayer = 1f;
 
-        protected readonly Texture2D Texture;
+        public Texture2D Texture;
 
         protected UIElement(Texture2D? texture, Vector2 position)
         {

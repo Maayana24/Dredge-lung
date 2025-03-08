@@ -7,7 +7,7 @@ namespace Dredge_lung_test
     public abstract class Fish : Sprite
     {
         protected readonly float FishLayer = 0.8f;
-        protected Rectangle SourceRect { get; set; }
+        public Rectangle SourceRect { get; set; }
         protected Rectangle CollisionRect { get; set; }
 
         // List of anomalies for this fish
@@ -30,7 +30,7 @@ namespace Dredge_lung_test
         public Fish(Vector2 position) : base(Globals.Content.Load<Texture2D>("Fish1"), position)
         {
             // Generate anomalies when fish is created
-            Anomalies = AnomalyManager.Instance.GenerateAnomaliesForFish(this);
+            Anomalies = AnomalyManager.Instance.GenerateAnomalies(this);
         }
 
         public virtual void Update()
