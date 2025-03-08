@@ -8,11 +8,11 @@ namespace Dredge_lung_test
         {
             // Set source rectangle for the Jelly fish on the sprite sheet
             SourceRect = new Rectangle(0, 200, 400, 350);
-
+            
             // Set properties
             Speed = 120.0f;
             Scale = new Vector2(0.5f, 0.5f);
-
+            
             // Set vertical movement direction
             Direction = new Vector2(0, -1);
         }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Dredge_lung_test
 {
@@ -6,12 +7,10 @@ namespace Dredge_lung_test
     {
         public Grouper(Vector2 position) : base(position)
         {
-            // Set source rectangle for the Grouper fish on the sprite sheet
-            SourceRect = new Rectangle(150, 0, 200, 150); // Adjust this based on actual position in sprite sheet
-
-            // Set properties
+            SourceRect = new Rectangle(100, 0, 600, 280);
             Speed = 150.0f;
-            Scale = new Vector2(0.5f, 0.5f);
+            Scale = new Vector2(0.6f, 0.6f);
+            Direction = new Vector2(-1, 0); // Start moving left (mirror)
         }
     }
 }

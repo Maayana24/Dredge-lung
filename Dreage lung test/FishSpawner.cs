@@ -10,8 +10,8 @@ namespace Dredge_lung_test
         private readonly List<Fish> _activeFishes;
         private readonly Random _random;
         private float _spawnTimer;
-        private readonly float _minSpawnTime = 3.0f; // Minimum time between spawns
-        private readonly float _maxSpawnTime = 5.0f; // Maximum time between spawns
+        private readonly float _minSpawnTime = 0.5f;
+        private readonly float _maxSpawnTime = 2.0f;
         private float _nextSpawnTime;
 
         private readonly int _screenWidth;
@@ -25,6 +25,9 @@ namespace Dredge_lung_test
             _nextSpawnTime = GetRandomSpawnTime();
             _screenWidth = screenWidth;
             _screenHeight = screenHeight;
+
+            // Ensure AnomalyManager is initialized
+            AnomalyManager.Instance.ToString(); // Just to trigger initialization
         }
 
         public void Update()
@@ -51,8 +54,8 @@ namespace Dredge_lung_test
 
         private void SpawnRandomFish()
         {
-            // 1 in 5 chance to spawn a Jelly (bottom to top)
-            bool spawnJelly = _random.Next(15) == 0;
+            // 1 in 10 chance to spawn a Jelly (bottom to top)
+            bool spawnJelly = _random.Next(10) == 0;
 
             if (spawnJelly)
             {
@@ -62,9 +65,9 @@ namespace Dredge_lung_test
             {
                 // Choose a random horizontal fish type (0=Grouper, 1=Angler, 2=Eel, 3=Shark)
                 int fishType = _random.Next(4);
-                bool moveLeftToRight = _random.Next(2) == 0; // 50% chance for each direction
+                bool leftToRight = _random.Next(2) == 0; // 50% chance for each direction
 
-                SpawnFish(fishType, moveLeftToRight);
+                SpawnFish(fishType, leftToRight);
             }
         }
 
@@ -78,15 +81,15 @@ namespace Dredge_lung_test
             _activeFishes.Add(jelly);
         }
 
-        private void SpawnFish(int fishType, bool moveLeftToRight)
+        private void SpawnFish(int fishType, bool leftToRight)
         {
             // Set starting position based on direction (off-screen)
-            float xPos = moveLeftToRight ? -100 : _screenWidth + 100;
+            float xPos = leftToRight ? -100 : _screenWidth + 100; // Off-screen position
             float yPos = _random.Next(200, _screenHeight - 200); // Random y position
             Vector2 position = new Vector2(xPos, yPos);
 
-            // Create the appropriate fish type
             Fish fish;
+
             switch (fishType)
             {
                 case 0:
@@ -107,7 +110,7 @@ namespace Dredge_lung_test
             }
 
             // Set direction based on spawn side
-            fish.Direction = moveLeftToRight ? new Vector2(1, 0) : new Vector2(-1, 0);
+            fish.Direction = leftToRight ? new Vector2(1, 0) : new Vector2(-1, 0);
 
             _activeFishes.Add(fish);
         }
