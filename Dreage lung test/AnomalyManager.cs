@@ -42,8 +42,8 @@ namespace Dredge_lung_test
         private void LoadTextures()
         {
             // Load anomaly textures
-            _extraLimbsTexture = Globals.Content.Load<Texture2D>("Anomalies/ExtraLimbs");
-            _inflammationTexture = Globals.Content.Load<Texture2D>("Anomalies/Inflammation");
+            _extraLimbsTexture = Globals.Content.Load<Texture2D>("Fish/inflammation");
+            _inflammationTexture = Globals.Content.Load<Texture2D>("Fish/inflammation");
             // Future texture loading will be added here
         }
 
@@ -52,7 +52,7 @@ namespace Dredge_lung_test
             // Map fish types to their respective source rectangles
             _fishTypeToRectangle = new Dictionary<Type, Rectangle>
             {
-                { typeof(Grouper), new Rectangle(0, 0, 1000, 600) },
+                { typeof(Grouper), new Rectangle(100, 0, 300, 200) },
                 { typeof(Angler), new Rectangle(0, 600, 1000, 600) },
                 { typeof(Eel), new Rectangle(0, 1200, 1000, 600) },
                 { typeof(Shark), new Rectangle(0, 550, 1000, 800) },

@@ -27,7 +27,7 @@ namespace Dredge_lung_test
             }
         }
 
-        public Fish(Vector2 position) : base(Globals.Content.Load<Texture2D>("Fish1"), position)
+        public Fish(Vector2 position) : base(Globals.Content.Load<Texture2D>("Fish/FishTemplate"), position)
         {
             // Generate anomalies when fish is created
             Anomalies = AnomalyManager.Instance.GenerateAnomaliesForFish(this);
