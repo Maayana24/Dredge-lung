@@ -6,7 +6,7 @@ namespace Dredge_lung_test
 {
     public abstract class Sprite
     {
-        protected readonly Texture2D Texture;
+        public readonly Texture2D Texture;
         protected readonly Vector2 Origin;
 
         public Vector2 Position { get; protected set; }

@@ -5,7 +5,7 @@ namespace Dredge_lung_test
 {
     public abstract class UIElement
     {
-        protected Vector2 Position { get;  set; }
+        public Vector2 Position { get;  set; }
         public Vector2 Scale { get; set; } = Vector2.One;
         public bool IsVisible { get; set; } = true;
 

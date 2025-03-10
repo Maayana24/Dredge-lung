@@ -26,6 +26,9 @@ namespace Dredge_lung_test
             _graphics.PreferredBackBufferHeight = 1920;
             _graphics.ApplyChanges();
 
+            Globals.GraphicsDevice = GraphicsDevice;
+            Globals.ScreenWidth = 1080;  // Your specified width
+            Globals.ScreenHeight = 1920; // Your specified height
             Globals.Content = Content;
             base.Initialize();
         }
@@ -37,6 +40,7 @@ namespace Dredge_lung_test
             Globals.SpriteBatch = _spriteBatch;
 
             // TODO: use this.Content to load your game content here
+            Globals.Font = Content.Load<SpriteFont>("Fonts/Defult");
             _gm = new();
         }
 

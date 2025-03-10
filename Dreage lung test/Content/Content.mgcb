@@ -157,7 +157,7 @@
 /processorParam:TextureFormat=Color
 /build:Fish/FishTemplate.png
 
-#begin Fish/inflammation.png
+#begin Fish/InflammationD.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -167,7 +167,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Fish/inflammation.png
+/build:Fish/InflammationD.png
 
 #begin Fish1.png
 /importer:TextureImporter
@@ -193,6 +193,13 @@
 /processorParam:TextureFormat=Color
 /build:FishTemplate.png
 
+#begin Fonts/Defult.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Defult.spritefont
+
 #begin submarine.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -204,6 +211,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:submarine.png
+
+#begin UI/Button.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:UI/Button.png
 
 #begin UI/CameraFrame.png
 /importer:TextureImporter
@@ -228,4 +247,16 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:UI/cameraIcon.png
+
+#begin UI/InspectionBG.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:UI/InspectionBG.png
 

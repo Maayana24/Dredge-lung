@@ -42,8 +42,8 @@ namespace Dredge_lung_test
         private void LoadTextures()
         {
             // Load anomaly textures
-            _extraLimbsTexture = Globals.Content.Load<Texture2D>("Fish/inflammation");
-            _inflammationTexture = Globals.Content.Load<Texture2D>("Fish/inflammation");
+            _extraLimbsTexture = Globals.Content.Load<Texture2D>("Fish/InflammationD");
+            _inflammationTexture = Globals.Content.Load<Texture2D>("Fish/InflammationD");
             // Future texture loading will be added here
         }
 

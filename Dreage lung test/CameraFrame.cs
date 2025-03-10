@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+
 namespace Dredge_lung_test
 {
     public class CameraFrame : UIElement, IClickable
@@ -10,22 +11,22 @@ namespace Dredge_lung_test
         private Rectangle _bounds;
         private List<Fish> _fishes;
         private List<Fish> _detectedFish = new List<Fish>();
+        private FishInspectionScreen _inspectionScreen;
 
-        public CameraFrame(Vector2 position, List<Fish> fishes) : base(Globals.Content.Load<Texture2D>("UI/CameraFrame"), position)
+        public CameraFrame(Vector2 position, List<Fish> fishes, FishInspectionScreen inspectionScreen) : base(Globals.Content.Load<Texture2D>("UI/CameraFrame"), position)
         {
             Origin = new Vector2(Texture.Width / 2f, Texture.Height / 2f);
             Scale = new Vector2(0.5f, 0.5f);
             _bounds = new(0, 0, Texture.Width, Texture.Height);
             IsVisible = false;
             _fishes = fishes;
+            _inspectionScreen = inspectionScreen;
         }
 
         public override void Update()
         {
             Position = IM.MousePosition;
-
             _detectedFish.Clear();
-
             if (IsVisible)
             {
                 foreach (var fish in _fishes)
@@ -47,18 +48,28 @@ namespace Dredge_lung_test
         {
             if (IsVisible && _detectedFish.Count > 0)
             {
-                // Implement what happens when a fish is caught
-
-                System.Diagnostics.Debug.WriteLine($"Captured {_detectedFish.Count} fish!");
-
+                // Find the fish that was clicked on
+                Fish clickedFish = null;
                 foreach (var fish in _detectedFish)
                 {
-                    // Do something with each detected fish
-                    System.Diagnostics.Debug.WriteLine($"Captured fish at position {fish.Position}");
+                    if (fish.Bounds.Contains(new Point((int)IM.MousePosition.X, (int)IM.MousePosition.Y)))
+                    {
+                        clickedFish = fish;
+                        break;
+                    }
                 }
 
-                // Optionally hide the camera frame after capturing
-                // IsVisible = false;
+                if (clickedFish != null)
+                {
+                    // Open the inspection screen with the clicked fish
+                    _inspectionScreen.OpenInspection(clickedFish);
+                    IsVisible = false;
+                    System.Diagnostics.Debug.WriteLine($"Inspecting fish at position {clickedFish.Position}");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"Detected {_detectedFish.Count} fish, but none were clicked directly.");
+                }
             }
         }
 
@@ -71,7 +82,6 @@ namespace Dredge_lung_test
                 (int)(Texture.Width * Scale.X),
                 (int)(Texture.Height * Scale.Y)
             );
-
             return frameBounds.Intersects(fish.Bounds);
         }
 
