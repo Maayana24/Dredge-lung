@@ -19,7 +19,7 @@ namespace Dredge_lung_test
         public Color Color { get; set; } = Color.White;
         public float LayerDepth { get; set; } = 0f;
 
-        public Sprite(Texture2D texture, Vector2 position) // Added `isMirrored`
+        public Sprite(Texture2D texture, Vector2 position)
         {
             Texture = texture ?? throw new ArgumentNullException(nameof(texture));
             Position = position;

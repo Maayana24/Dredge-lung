@@ -11,7 +11,7 @@ namespace Dredge_lung_test
             
             // Set properties - Sharks are slower but larger
             Speed = 100.0f;
-            Scale = new Vector2(0.5f, 0.5f);
+            Scale = new Vector2(0.3f, 0.3f);
         }
     }
 }

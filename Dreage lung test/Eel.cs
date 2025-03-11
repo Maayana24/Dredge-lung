@@ -10,7 +10,7 @@ namespace Dredge_lung_test
         public Eel(Vector2 position) : base(position)
         {
             // Set source rectangle for the Eel fish on the sprite sheet
-            SourceRect = new Rectangle(450, 300, 800, 300);
+            SourceRect = new Rectangle(450, 250, 350, 200);
             
             // Set properties - Eels are faster
             Speed = 220.0f;
