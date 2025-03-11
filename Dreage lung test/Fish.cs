@@ -50,9 +50,9 @@ namespace Dredge_lung_test
 
         protected virtual void UpdateCollisionRect()
         {
-            // Update collision bounds to follow position
-            int width = (int)(SourceRect.Width * Scale.X * 0.6f);
-            int height = (int)(SourceRect.Height * Scale.Y * 0.6f);
+            // Use full dimensions of the source rectangle for collision
+            int width = (int)(SourceRect.Width * Scale.X);
+            int height = (int)(SourceRect.Height * Scale.Y);
 
             CollisionRect = new Rectangle(
                 (int)(Position.X - width / 2),
@@ -60,7 +60,6 @@ namespace Dredge_lung_test
                 width,
                 height
             );
-
             Bounds = CollisionRect;
         }
 
