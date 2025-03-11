@@ -7,7 +7,7 @@ namespace Dredge_lung_test
         public Shark(Vector2 position) : base(position)
         {
             // Set source rectangle for the Shark fish on the sprite sheet
-            SourceRect = new Rectangle(0, 550, 1000, 800);
+            SourceRect = new Rectangle(150, 550, 600, 200);
             
             // Set properties - Sharks are slower but larger
             Speed = 100.0f;

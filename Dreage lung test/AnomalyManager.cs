@@ -52,10 +52,10 @@ namespace Dredge_lung_test
             // Map fish types to their respective source rectangles
             _fishTypeToRectangle = new Dictionary<Type, Rectangle>
             {
-                { typeof(Grouper), new Rectangle(100, 0, 300, 200) },
+                { typeof(Grouper), new Rectangle(0, 0, 500, 200) },
                 { typeof(Angler), new Rectangle(0, 600, 1000, 600) },
                 { typeof(Eel), new Rectangle(0, 1200, 1000, 600) },
-                { typeof(Shark), new Rectangle(0, 550, 1000, 800) },
+                { typeof(Shark), new Rectangle(150, 550, 600, 200) },
                 { typeof(Jelly), new Rectangle(0, 1800, 800, 800) }
                 // Additional fish types can be added here
             };

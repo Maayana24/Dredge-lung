@@ -39,7 +39,7 @@ namespace Dredge_lung_test
         {
             Movement();
             // Flip the sprite based on direction while preserving initial mirroring
-            SpriteEffect = Direction.X < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            SpriteEffect = Direction.X > 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             UpdateCollisionRect();
         }
 

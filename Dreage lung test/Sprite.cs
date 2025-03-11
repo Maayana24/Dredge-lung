@@ -14,12 +14,12 @@ namespace Dredge_lung_test
         public float Speed { get; protected set; }
         public Vector2 Scale { get; protected set; } = Vector2.One;
         public Rectangle Bounds { get; protected set; }
-        public SpriteEffects SpriteEffect { get; protected set; }
+        public SpriteEffects SpriteEffect { get; protected set; } = SpriteEffects.None;
         public float Rotation { get; set; } = 0f;
         public Color Color { get; set; } = Color.White;
         public float LayerDepth { get; set; } = 0f;
 
-        public Sprite(Texture2D texture, Vector2 position, bool isMirrored = false) // Added `isMirrored`
+        public Sprite(Texture2D texture, Vector2 position) // Added `isMirrored`
         {
             Texture = texture ?? throw new ArgumentNullException(nameof(texture));
             Position = position;
@@ -28,8 +28,6 @@ namespace Dredge_lung_test
             Origin = new Vector2(texture.Width / 2f, texture.Height / 2f);
             Bounds = new Rectangle(0, 0, texture.Width, texture.Height);
 
-            // Set initial mirroring
-            SpriteEffect = isMirrored ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
         }
 
         public virtual void Draw()

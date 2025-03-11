@@ -88,7 +88,7 @@ namespace Dredge_lung_test
             float yPos = _random.Next(200, _screenHeight - 200); // Random y position
             Vector2 position = new Vector2(xPos, yPos);
 
-            Fish fish = new Shark(position);
+            Fish fish = new Grouper(position);
 
 /*            switch (fishType)
             {
