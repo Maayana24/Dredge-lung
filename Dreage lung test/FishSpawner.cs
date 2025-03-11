@@ -88,9 +88,9 @@ namespace Dredge_lung_test
             float yPos = _random.Next(200, _screenHeight - 200); // Random y position
             Vector2 position = new Vector2(xPos, yPos);
 
-            Fish fish;
+            Fish fish = new Shark(position);
 
-            switch (fishType)
+/*            switch (fishType)
             {
                 case 0:
                     fish = new Grouper(position);
@@ -107,7 +107,7 @@ namespace Dredge_lung_test
                 default:
                     fish = new Grouper(position);
                     break;
-            }
+            }*/
 
             // Set direction based on spawn side
             fish.Direction = leftToRight ? new Vector2(1, 0) : new Vector2(-1, 0);

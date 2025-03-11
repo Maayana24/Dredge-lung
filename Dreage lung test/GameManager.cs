@@ -18,12 +18,12 @@ namespace Dredge_lung_test
             _fishes = new List<Fish>();
 
             // Background layers
-            _bgm.AddLayer(new Layer(LoadAndRotateTexture("1"), 0.0f, 0.0f));
-            _bgm.AddLayer(new Layer(LoadAndRotateTexture("2"), 0.1f, 0.09f));
-            _bgm.AddLayer(new Layer(LoadAndRotateTexture("4"), 0.2f, 0.1f));
-            _bgm.AddLayer(new Layer(LoadAndRotateTexture("5"), 0.3f, 0.2f));
-            _bgm.AddLayer(new Layer(LoadAndRotateTexture("7"), 0.4f, 0.3f));
-            _bgm.AddLayer(new Layer(LoadAndRotateTexture("9"), 0.5f, 0.4f));
+            //_bgm.AddLayer(new Layer(LoadAndRotateTexture("1"), 0.0f, 0.0f));
+            //_bgm.AddLayer(new Layer(LoadAndRotateTexture("2"), 0.1f, 0.09f));
+            //_bgm.AddLayer(new Layer(LoadAndRotateTexture("4"), 0.2f, 0.1f));
+            //_bgm.AddLayer(new Layer(LoadAndRotateTexture("5"), 0.3f, 0.2f));
+            //_bgm.AddLayer(new Layer(LoadAndRotateTexture("7"), 0.4f, 0.3f));
+            //_bgm.AddLayer(new Layer(LoadAndRotateTexture("9"), 0.5f, 0.4f));
 
             // Create player
             _player = new Player(Globals.Content.Load<Texture2D>("submarine"), new Vector2(300, 300));
