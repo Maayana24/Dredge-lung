@@ -42,6 +42,7 @@ namespace Dredge_lung_test
             // TODO: use this.Content to load your game content here
             Globals.Font = Content.Load<SpriteFont>("Fonts/Defult");
             _gm = new();
+            DebugRenderer.Initialize(GraphicsDevice);
         }
 
         protected override void Update(GameTime gameTime)

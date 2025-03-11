@@ -13,6 +13,8 @@ namespace Dredge_lung_test
         // List of anomalies for this fish
         public List<Anomaly> Anomalies { get; private set; }
 
+        public static bool ShowCollisionRects = true;
+
         // Property to check if the fish has any deadly anomalies
         public bool HasDeadlyAnomaly
         {
@@ -81,6 +83,11 @@ namespace Dredge_lung_test
             foreach (var anomaly in Anomalies)
             {
                 anomaly.Draw(Position, Scale, SpriteEffect, FishLayer);
+            }
+            if (ShowCollisionRects)
+            {
+                Color debugColor = HasDeadlyAnomaly ? Color.Red : Color.Green;
+                DebugRenderer.DrawRectangle(CollisionRect, debugColor, 0.1f);
             }
         }
     }
