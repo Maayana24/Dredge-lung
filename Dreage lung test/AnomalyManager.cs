@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-
+using System.Diagnostics;
 
 namespace Dredge_lung_test
 {
@@ -14,16 +14,15 @@ namespace Dredge_lung_test
         // Textures for each anomaly type
         private Texture2D _extraLimbsTexture;
         private Texture2D _inflammationTexture;
-        // Future textures will be added here
-
-        // Source rectangles mapping for different fish types
-        private Dictionary<Type, Rectangle> _fishTypeToRectangle;
+        // Flag to track if textures loaded successfully
+        public bool TexturesLoaded { get; private set; } = false;
 
         // Constructor is private for singleton pattern
         private AnomalyManager()
         {
-            LoadTextures();
-            InitializeFishMapping();
+            TexturesLoaded = LoadTextures();
+            // Debug message to confirm initialization
+            Console.WriteLine($"AnomalyManager initialized. Textures loaded: {TexturesLoaded}");
         }
 
         // Singleton instance access
@@ -39,79 +38,140 @@ namespace Dredge_lung_test
             }
         }
 
-        private void LoadTextures()
+        private bool LoadTextures()
         {
-            // Load anomaly textures
-            _extraLimbsTexture = Globals.Content.Load<Texture2D>("Fish/InflammationD");
-            _inflammationTexture = Globals.Content.Load<Texture2D>("Fish/InflammationD");
-            // Future texture loading will be added here
+            try
+            {
+                // Debug the content paths
+                Debug.WriteLine("Attempting to load anomaly textures...");
+
+                // Load ExtraLimbs texture
+                try
+                {
+                    _extraLimbsTexture = Globals.Content.Load<Texture2D>("ExtraLimbs");
+                    Debug.WriteLine("Loaded ExtraLimbs texture from root directory");
+                }
+                catch
+                {
+                    try
+                    {
+                        // Try with Fish subdirectory
+                        _extraLimbsTexture = Globals.Content.Load<Texture2D>("Fish/ExtraLimbs");
+                        Debug.WriteLine("Loaded ExtraLimbs texture from Fish subdirectory");
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Failed to load ExtraLimbs texture: {ex.Message}");
+                        // Create fallback texture
+                        _extraLimbsTexture = CreateFallbackTexture(Color.Purple);
+                    }
+                }
+
+                // Load Inflammation texture
+                try
+                {
+                    _inflammationTexture = Globals.Content.Load<Texture2D>("InflammationD");
+                    Debug.WriteLine("Loaded Inflammation texture from root directory");
+                }
+                catch
+                {
+                    try
+                    {
+                        // Try with Fish subdirectory
+                        _inflammationTexture = Globals.Content.Load<Texture2D>("Fish/InflammationD");
+                        Debug.WriteLine("Loaded Inflammation texture from Fish subdirectory");
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Failed to load Inflammation texture: {ex.Message}");
+                        // Create fallback texture
+                        _inflammationTexture = CreateFallbackTexture(Color.Red);
+                    }
+                }
+
+                // Verify textures were loaded
+                Debug.WriteLine($"ExtraLimbs texture dimensions: {_extraLimbsTexture.Width}x{_extraLimbsTexture.Height}");
+                Debug.WriteLine($"Inflammation texture dimensions: {_inflammationTexture.Width}x{_inflammationTexture.Height}");
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ERROR loading anomaly textures: {ex.Message}");
+
+                // Create fallback textures
+                _extraLimbsTexture = CreateFallbackTexture(Color.Purple);
+                _inflammationTexture = CreateFallbackTexture(Color.Red);
+
+                Debug.WriteLine("Created fallback textures");
+                return false;
+            }
         }
 
-        private void InitializeFishMapping()
+        private Texture2D CreateFallbackTexture(Color color)
         {
-            // Map fish types to their respective source rectangles
-            _fishTypeToRectangle = new Dictionary<Type, Rectangle>
-            {
-                { typeof(Grouper), new Rectangle(275, 50, 175, 105) },
-                { typeof(Angler), new Rectangle(600, 10, 250, 175) },
-                { typeof(Eel), new Rectangle(450, 250, 350, 200) },
-                { typeof(Shark), new Rectangle(150, 550, 600, 200) },
-                { typeof(Jelly), new Rectangle(150, 210, 250, 300) }
-                // Additional fish types can be added here
-            };
+            Texture2D fallbackTexture = new Texture2D(Globals.GraphicsDevice, 50, 50);
+            Color[] colors = new Color[50 * 50];
+            for (int i = 0; i < colors.Length; i++)
+                colors[i] = color;
+            fallbackTexture.SetData(colors);
+            return fallbackTexture;
         }
 
         // Generate random anomalies for a fish
         public List<Anomaly> GenerateAnomaliesForFish(Fish fish)
         {
             List<Anomaly> anomalies = new List<Anomaly>();
-            List<AnomalyType> availableTypes = new List<AnomalyType>
+
+            // Check if textures were loaded properly
+            if (!TexturesLoaded)
             {
-                AnomalyType.ExtraLimbs,
-                AnomalyType.Inflammation
-                // Add future anomaly types here
-            };
+                Debug.WriteLine("WARNING: Textures not loaded, using fallback textures");
+            }
 
-            // Determine how many anomalies (1 or 2)
-            int anomalyCount = _random.Next(1, 3); // 1 or 2
+            // Access the fish's source rectangle directly from the property
+            Rectangle sourceRect = fish.SourceRect;
 
-            // Track if we've already added a deadly anomaly
-            bool hasDeadlyAnomaly = false;
+            // Debug output - make sure we're getting proper source rectangle
+            Debug.WriteLine($"Creating anomaly for {fish.Name} with source rect: {sourceRect}");
 
-            for (int i = 0; i < anomalyCount; i++)
+            // Make sure the source rectangle is valid
+            if (sourceRect.Width <= 0 || sourceRect.Height <= 0)
             {
-                // If we've exhausted all anomaly types, break
-                if (availableTypes.Count == 0)
-                    break;
+                Debug.WriteLine($"WARNING: Invalid source rectangle for fish {fish.Name}. Using default rectangle.");
+                sourceRect = new Rectangle(0, 0, 100, 100); // Fallback rectangle
+            }
 
-                // Select a random type from available types
-                int typeIndex = _random.Next(availableTypes.Count);
-                AnomalyType selectedType = availableTypes[typeIndex];
+            // Determine if this fish has anomalies (70% chance)
+            if (_random.NextDouble() < 0.7)
+            {
+                // Determine how many anomalies (1-2)
+                int anomalyCount = _random.Next(1, 3);
 
-                // Remove selected type to avoid duplicates
-                availableTypes.RemoveAt(typeIndex);
-
-                // Determine if this anomaly should be deadly
-                bool isDeadly = _random.Next(2) == 0; // 50% chance
-
-                // If we already have a deadly anomaly, make this one non-deadly
-                if (hasDeadlyAnomaly && isDeadly)
+                for (int i = 0; i < anomalyCount; i++)
                 {
-                    isDeadly = false;
+                    // Randomly select anomaly type
+                    AnomalyType selectedType = (AnomalyType)_random.Next(Enum.GetValues(typeof(AnomalyType)).Length);
+
+                    // Randomly determine if the anomaly is deadly (30% chance)
+                    bool isDeadly = _random.NextDouble() < 0.3;
+
+                    // Get the appropriate texture
+                    Texture2D texture = GetTextureForAnomalyType(selectedType);
+
+                    // Select a random fallback color based on anomaly type
+                    Color fallbackColor = selectedType == AnomalyType.ExtraLimbs ?
+                        Color.Purple : Color.Red;
+
+                    // Create the anomaly
+                    anomalies.Add(new Anomaly(selectedType, isDeadly, texture, sourceRect, fallbackColor));
+
+                    Debug.WriteLine($"Added {selectedType} anomaly to {fish.Name}, deadly: {isDeadly}");
                 }
-
-                // If this is deadly, mark that we have a deadly anomaly
-                if (isDeadly)
-                {
-                    hasDeadlyAnomaly = true;
-                }
-
-                // Get the right texture and source rectangle based on type
-                Texture2D texture = GetTextureForAnomalyType(selectedType);
-                Rectangle sourceRect = GetSourceRectForFish(fish.GetType());
-
-                // Create and add the anomaly
-                anomalies.Add(new Anomaly(selectedType, isDeadly, texture, sourceRect));
+            }
+            else
+            {
+                Debug.WriteLine($"No anomalies generated for {fish.Name}");
             }
 
             return anomalies;
@@ -125,21 +185,9 @@ namespace Dredge_lung_test
                     return _extraLimbsTexture;
                 case AnomalyType.Inflammation:
                     return _inflammationTexture;
-                // Add cases for future anomaly types
                 default:
-                    return _extraLimbsTexture; // Default fallback
+                    return _extraLimbsTexture;
             }
-        }
-
-        private Rectangle GetSourceRectForFish(Type fishType)
-        {
-            if (_fishTypeToRectangle.TryGetValue(fishType, out Rectangle rect))
-            {
-                return rect;
-            }
-            // Default rectangle if type not found
-            return new Rectangle(0, 0, 1000, 600);
         }
     }
-
 }

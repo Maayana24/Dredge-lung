@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Dredge_lung_test
 {
@@ -27,7 +28,7 @@ namespace Dredge_lung_test
             _screenHeight = screenHeight;
 
             // Ensure AnomalyManager is initialized
-            AnomalyManager.Instance.ToString(); // Just to trigger initialization
+            AnomalyManager.Instance.ToString();
         }
 
         public void Update()
@@ -77,7 +78,10 @@ namespace Dredge_lung_test
             int xPos = _random.Next(100, _screenWidth - 100);
             Vector2 position = new Vector2(xPos, _screenHeight + 50); // Start below the screen
 
-            Jelly jelly = new Jelly(position);
+            Rectangle sourceRect = new Rectangle(150, 210, 250, 300);
+            Debug.WriteLine($"Creating Jelly with source rect: {sourceRect}");
+
+            Fish jelly = new Fish("Jelly", position, 120, sourceRect, new Vector2(0.5f, 0.5f), new Vector2(0, -1));
             _activeFishes.Add(jelly);
         }
 
@@ -88,26 +92,49 @@ namespace Dredge_lung_test
             float yPos = _random.Next(200, _screenHeight - 200); // Random y position
             Vector2 position = new Vector2(xPos, yPos);
 
-            Fish fish;
+            Rectangle sourceRect;
+            String fishName;
+            Vector2 scale;
+            float speed;
 
             switch (fishType)
             {
                 case 0:
-                    fish = new Grouper(position);
+                    fishName = "Grouper";
+                    sourceRect = new Rectangle(275, 50, 175, 105);
+                    scale = new Vector2(0.6f, 0.6f);
+                    speed = 150;
                     break;
                 case 1:
-                    fish = new Angler(position);
+                    fishName = "Angler";
+                    sourceRect = new Rectangle(600, 10, 250, 175);
+                    scale = new Vector2(0.5f, 0.5f);
+                    speed = 180;
                     break;
                 case 2:
-                    fish = new Eel(position);
+                    fishName = "Eel";
+                    sourceRect = new Rectangle(450, 250, 350, 200);
+                    scale = new Vector2(0.5f, 0.5f);
+                    speed = 220;
                     break;
                 case 3:
-                    fish = new Shark(position);
+                    fishName = "Shark";
+                    sourceRect = new Rectangle(150, 550, 600, 200);
+                    scale = new Vector2(0.3f, 0.3f);
+                    speed = 100;
                     break;
                 default:
-                    fish = new Grouper(position);
+                    fishName = "Grouper";
+                    sourceRect = new Rectangle(275, 50, 175, 105);
+                    scale = new Vector2(0.6f, 0.6f);
+                    speed = 150;
                     break;
             }
+
+            Debug.WriteLine($"Creating {fishName} with source rect: {sourceRect}");
+
+            // Create the fish with the determined parameters
+            Fish fish = new Fish(fishName, position, speed, sourceRect, scale);
 
             // Set direction based on spawn side
             fish.Direction = leftToRight ? new Vector2(1, 0) : new Vector2(-1, 0);
