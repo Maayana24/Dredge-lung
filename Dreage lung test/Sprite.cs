@@ -34,5 +34,6 @@ namespace Dredge_lung_test
         {
             Globals.SpriteBatch.Draw(Texture, Position, Bounds, Color.White, 0, Origin, Scale, SpriteEffect, 1);
         }
+
     }
 }

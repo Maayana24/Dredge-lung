@@ -29,13 +29,18 @@ namespace Dredge_lung_test
 
             if (keyboardState.IsKeyDown(Keys.A)) _direction.X--;
             if (keyboardState.IsKeyDown(Keys.D)) _direction.X++;
+       
             MouseState = Mouse.GetState();
 
 
             MouseClicked = (MouseState.LeftButton == ButtonState.Pressed) && (_lastMouseState.LeftButton == ButtonState.Released);
             _lastMouseState = Mouse.GetState();
 
+        }
 
+        public static bool IsKeyPressed(Keys key)
+        {
+            return Keyboard.GetState().IsKeyDown(key);
         }
     }
 }

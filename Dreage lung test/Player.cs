@@ -1,14 +1,30 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace Dredge_lung_test
 {
     public class Player : Sprite
     {
-        private Vector2 _velocity;
-        private Vector2 _acceleration = new Vector2(0, 0);
-        private float _movement = 4;
+        private Vector2 _velocity = Vector2.Zero;
+        private Vector2 _acceleration = Vector2.Zero;
+        private float _accelerationRate = 600;
+        private float _frictionRate = 500;
+        private float _maxOvershoot = 100; // How far below default Y the sub can go
+        private float _returnSpeed = 50; // How quickly to return to default Y
+        private bool _isReturning = false;
+        private bool _isAtDefaultPosition = false;
+        float spriteWidth;
+        float spriteHeight;
+
+        private float _thrustForce = 8000f; // Upward force when Space is pressed
+        private float _gravity = 650; // How fast the player falls when not pressing Space
+
+        private Vector2 currentDirection;
+        private float _defaultY; // Store the default Y position
         public static bool ShowCollisionRects = true;
+
 
         public Player(Texture2D texture, Vector2 position) : base(texture, position) 
         {
@@ -16,45 +32,151 @@ namespace Dredge_lung_test
             Speed = 400;
             Scale = new Vector2(0.15f, 0.15f);
             Position = position;
+            Direction = IM.Direction;
+            _defaultY = position.Y;
+            spriteWidth = Texture.Width * Scale.X;
+            spriteHeight = Texture.Height * Scale.Y;
         }
+
+
 
         public void Update()
         {
 
-            //Direction = Vector2.Normalize(IM.Direction);
-            if (IM.Direction != Vector2.Zero)
-                Position += IM.Direction * Speed * Globals.DeltaTime;
+            Movement();
+            Bounds = new Rectangle((int)Position.X, (int)Position.Y, (int)spriteWidth, (int)spriteHeight);
+        }
 
-            Bounds = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * Scale.X), (int)(Texture.Height * Scale.Y));
-            /*            if(IM.Direction != Vector2.Zero)
-                        {
-                            Direction = Vector2.Normalize(IM.Direction);
-                           // position += dir * speed * Globals.TotalSeconds;
-                            _velocity += Direction * Speed * Globals.DeltaTime;
-                            _acceleration.X = Speed;
-                        }
-                        if(_acceleration == Vector2.Zero)
-                        {
-                            Vector2 friction = _velocity;
-                            if(friction.Length() > 0)
-                            {
-                                friction.Normalize();
-                                friction *= Speed / 2 * Globals.DeltaTime;
-                                _velocity -= friction;
+        private void Movement()
+        {
+            Vector2 inputDirection = IM.Direction;
 
-                                if(_velocity.Length() < 0.01f)
-                                {
-                                    _velocity = Vector2.Zero;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            _velocity += _acceleration * Globals.DeltaTime;
-                        }
-                        Position += _velocity * Globals.DeltaTime;*/
+            // Handle vertical movement with W and S keys
+            if (IM.IsKeyPressed(Keys.W))
+            {
+                // Move up with the same acceleration feel as horizontal
+                _acceleration.Y = -_accelerationRate;
+                _isReturning = false;
+                _isAtDefaultPosition = false;
+            }
+            else if (IM.IsKeyPressed(Keys.S))
+            {
+                // Move down with the same acceleration feel as horizontal
+                _acceleration.Y = _accelerationRate;
+                _isReturning = false;
+                _isAtDefaultPosition = false;
+            }
+            else
+            {
+                // No vertical input, handle return to default position
+                if (Position.Y < _defaultY - 1) // Above default (with small tolerance)
+                {
+                    // Should return downward to default Y
+                    if (!_isReturning)
+                    {
+                        _isReturning = true;
+                        _velocity.Y = _returnSpeed; // Set a fixed downward velocity
+                    }
+                }
+                else if (Position.Y > _defaultY + 1) // Below default (with small tolerance)
+                {
+                    // Should return upward to default Y
+                    if (!_isReturning)
+                    {
+                        _isReturning = true;
+                        _velocity.Y = -_returnSpeed; // Set a fixed upward velocity
+                    }
+                }
+                else
+                {
+                    // We're at default position (within tolerance)
+                    Position = new Vector2(Position.X, _defaultY);
+                    _velocity.Y = 0;
+                    _acceleration.Y = 0;
+                    _isReturning = false;
+                    _isAtDefaultPosition = true;
+                }
+            }
+
+            // Handle horizontal acceleration
+            if (inputDirection.X != 0)
+            {
+                // Apply horizontal acceleration
+                _acceleration.X = inputDirection.X * _accelerationRate;
+            }
+            else
+            {
+                // Apply horizontal friction
+                if (_velocity.X != 0)
+                {
+                    float frictionX = Math.Sign(_velocity.X) * _frictionRate * Globals.DeltaTime;
+
+                    // Ensure we don't overshoot zero
+                    if (Math.Abs(frictionX) > Math.Abs(_velocity.X))
+                        _velocity.X = 0;
+                    else
+                        _velocity.X -= frictionX;
+                }
+
+                _acceleration.X = 0;
+            }
+
+            // Handle vertical movement during return to default
+            if (_isReturning)
+            {
+                // Keep the return velocity constant
+                // Check if we've returned to default Y
+                if ((_velocity.Y < 0 && Position.Y <= _defaultY) ||
+                    (_velocity.Y > 0 && Position.Y >= _defaultY))
+                {
+                    // We've returned to default, stop the movement
+                    Position = new Vector2(Position.X, _defaultY);
+                    _velocity.Y = 0;
+                    _isReturning = false;
+                    _isAtDefaultPosition = true;
+                }
+            }
+            else if (!_isAtDefaultPosition)
+            {
+                // Apply acceleration to vertical velocity when not returning
+                _velocity.Y += _acceleration.Y * Globals.DeltaTime;
+
+                // Apply friction for vertical movement when no keys pressed
+                if (_acceleration.Y == 0 && _velocity.Y != 0 && !_isReturning)
+                {
+                    float frictionY = Math.Sign(_velocity.Y) * _frictionRate * Globals.DeltaTime;
+
+                    // Ensure we don't overshoot zero
+                    if (Math.Abs(frictionY) > Math.Abs(_velocity.Y))
+                        _velocity.Y = 0;
+                    else
+                        _velocity.Y -= frictionY;
+                }
+            }
+
+            // Apply acceleration to horizontal velocity
+            _velocity.X += _acceleration.X * Globals.DeltaTime;
+
+            // Clamp velocity to max speed
+            if (_velocity.Length() > Speed)
+            {
+                _velocity = Vector2.Normalize(_velocity) * Speed;
+            }
+
+            // Update player position
+            Position += _velocity * Globals.DeltaTime;
+
+            // Calculate sprite dimensions
+
+
+            // Keep player within screen bounds
+            Position = new Vector2(
+                MathHelper.Clamp(Position.X, 0, Globals.ScreenWidth - spriteWidth),
+                MathHelper.Clamp(Position.Y, 0, Globals.ScreenHeight - spriteHeight)
+            );
 
         }
+
 
         public override void Draw()
         {
