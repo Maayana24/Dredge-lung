@@ -11,15 +11,11 @@ namespace Dredge_lung_test
         private Vector2 _acceleration = Vector2.Zero;
         private float _accelerationRate = 600;
         private float _frictionRate = 500;
-        private float _maxOvershoot = 100; // How far below default Y the sub can go
         private float _returnSpeed = 50; // How quickly to return to default Y
         private bool _isReturning = false;
         private bool _isAtDefaultPosition = false;
         float spriteWidth;
         float spriteHeight;
-
-        private float _thrustForce = 8000f; // Upward force when Space is pressed
-        private float _gravity = 650; // How fast the player falls when not pressing Space
 
         private Vector2 currentDirection;
         private float _defaultY; // Store the default Y position
