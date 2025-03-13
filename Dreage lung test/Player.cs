@@ -7,17 +7,18 @@ namespace Dredge_lung_test
 {
     public class Player : Sprite
     {
+        public bool IsHarpoonFiring { get; set; }
+
         private Vector2 _velocity = Vector2.Zero;
         private Vector2 _acceleration = Vector2.Zero;
         private float _accelerationRate = 600;
         private float _frictionRate = 500;
-        private float _returnSpeed = 50; // How quickly to return to default Y
+        private float _returnSpeed = 50; // How quickly to return to default Y\
+        private Rectangle _collision;
         private bool _isReturning = false;
         private bool _isAtDefaultPosition = false;
-        float spriteWidth;
-        float spriteHeight;
-
-        private Vector2 currentDirection;
+        private float _spriteWidth;
+        private float _spriteHeight;
         private float _defaultY; // Store the default Y position
         public static bool ShowCollisionRects = true;
 
@@ -31,13 +32,13 @@ namespace Dredge_lung_test
             Position = position;
             Direction = IM.Direction;
             _defaultY = position.Y;
-            spriteWidth = Texture.Width * Scale.X;
-            spriteHeight = Texture.Height * Scale.Y;
+            _spriteWidth = Texture.Width * Scale.X;
+            _spriteHeight = Texture.Height * Scale.Y;
         }
 
         public void Update()
         {
-            Movement();
+           Movement();
             Bounds = new Rectangle((int)Position.X + 15, (int)Position.Y + 8, 175, 106);
         }
 
@@ -45,15 +46,37 @@ namespace Dredge_lung_test
         {
             Vector2 inputDirection = IM.Direction;
 
-            // Handle vertical movement with W and S keys
-            if (IM.IsKeyPressed(Keys.W))
+            // Check if harpoon is firing - if so, restrict movement
+            if (IsHarpoonFiring)
+            {
+                // Disable horizontal movement completely
+                _acceleration.X = 0;
+
+                // Apply horizontal friction to gradually stop
+                if (_velocity.X != 0)
+                {
+                    float frictionX = Math.Sign(_velocity.X) * _frictionRate * Globals.DeltaTime;
+
+                    // Ensure we don't overshoot zero
+                    if (Math.Abs(frictionX) > Math.Abs(_velocity.X))
+                        _velocity.X = 0;
+                    else
+                        _velocity.X -= frictionX;
+                }
+
+                // Disable vertical input but allow return to default Y
+                inputDirection.Y = 0;
+            }
+
+            // Handle vertical movement with W and S keys - only if not firing
+            if (!IsHarpoonFiring && IM.IsKeyPressed(Keys.W))
             {
                 // Move up with the same acceleration feel as horizontal
                 _acceleration.Y = -_accelerationRate;
                 _isReturning = false;
                 _isAtDefaultPosition = false;
             }
-            else if (IM.IsKeyPressed(Keys.S))
+            else if (!IsHarpoonFiring && IM.IsKeyPressed(Keys.S))
             {
                 // Move down with the same acceleration feel as horizontal
                 _acceleration.Y = _accelerationRate;
@@ -92,13 +115,13 @@ namespace Dredge_lung_test
                 }
             }
 
-            // Handle horizontal acceleration
-            if (inputDirection.X != 0)
+            // Handle horizontal acceleration - only if not firing
+            if (!IsHarpoonFiring && inputDirection.X != 0)
             {
                 // Apply horizontal acceleration
                 _acceleration.X = inputDirection.X * _accelerationRate;
             }
-            else
+            else if (!IsHarpoonFiring)
             {
                 // Apply horizontal friction
                 if (_velocity.X != 0)
@@ -114,6 +137,7 @@ namespace Dredge_lung_test
 
                 _acceleration.X = 0;
             }
+
 
             // Handle vertical movement during return to default
             if (_isReturning)
@@ -161,13 +185,13 @@ namespace Dredge_lung_test
             Position += _velocity * Globals.DeltaTime;
 
             // Calculate sprite dimensions
-            spriteWidth = Texture.Width * Scale.X;
-            spriteHeight = Texture.Height * Scale.Y;
+            _spriteWidth = Texture.Width * Scale.X;
+            _spriteHeight = Texture.Height * Scale.Y;
 
             // Keep player within screen bounds
             Position = new Vector2(
-                MathHelper.Clamp(Position.X, 0, Globals.ScreenWidth - spriteWidth),
-                MathHelper.Clamp(Position.Y, 0, Globals.ScreenHeight - spriteHeight)
+                MathHelper.Clamp(Position.X, 0, Globals.ScreenWidth - _spriteWidth),
+                MathHelper.Clamp(Position.Y, 0, Globals.ScreenHeight - _spriteHeight)
             );
         }
 

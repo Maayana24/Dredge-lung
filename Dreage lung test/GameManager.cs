@@ -14,6 +14,7 @@ namespace Dredge_lung_test
         private readonly FishSpawner _fishSpawner;
         private Text _scoreText;
         private Text _livesText;
+        private Text _cooldownText;
         private ScoreManager _scoreManager;
 
         private readonly Harpoon _harpoon;
@@ -36,9 +37,12 @@ namespace Dredge_lung_test
             _scoreManager.ScoreChanged += UpdateScoreText;
             _scoreManager.LivesChanged += UpdateLivesText;
 
+
             // Create UI text elements for score and lives
             _scoreText = _ui.AddText(new Vector2(900, 40), "Score: 0", Color.White);
             _livesText = _ui.AddText(new Vector2(10, 40), "Lives: 3", Color.White);
+            _cooldownText = _ui.AddText(new Vector2(Globals.ScreenWidth / 2 - 100, 40), "", Color.Yellow);
+            _cooldownText.IsVisible = false;
 
 
             //Background layers
@@ -54,9 +58,6 @@ namespace Dredge_lung_test
 
             // Initialize harpoon
             _harpoon = new Harpoon(_player, _fishes, _scoreManager);
-
-            // Set up UI with fish list
-
 
             // Create fish spawner with screen dimensions
             _fishSpawner = new FishSpawner(_fishes);
