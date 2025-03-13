@@ -59,7 +59,7 @@ namespace Dredge_lung_test
 
 
             // Create fish spawner with screen dimensions
-            _fishSpawner = new FishSpawner(_fishes, Globals.ScreenWidth, Globals.ScreenHeight);
+            _fishSpawner = new FishSpawner(_fishes);
         }
 
         public void Update()
@@ -89,9 +89,8 @@ namespace Dredge_lung_test
         public void Draw()
         {
             _bgm.Draw();
+            _ui.Draw();
             _player.Draw();
-
-            // Draw harpoon
             _harpoon.Draw();
 
             // Draw all active fish
@@ -100,11 +99,6 @@ namespace Dredge_lung_test
                 fish.Draw();
             }
 
-            _ui.Draw();
-
-            // Draw score and lives (placeholder - you mentioned UI will be added later)
-            Texture2D pixel = new Texture2D(Globals.GraphicsDevice, 1, 1);
-            pixel.SetData(new[] { Color.White });
 
             // Draw score
             string scoreText = $"Score: {_scoreManager.Score}";
@@ -148,7 +142,7 @@ namespace Dredge_lung_test
             _isGameOver = false;
         }
 
-        private Texture2D LoadAndRotateTexture(string assetName)
+        private Texture2D LoadAndRotateTexture(string assetName) //maybe theres a simpler way?
         {
             Texture2D original = Globals.Content.Load<Texture2D>("Background/" + assetName);
             RenderTarget2D rotated = new RenderTarget2D(Globals.SpriteBatch.GraphicsDevice, original.Height, original.Width);

@@ -8,51 +8,38 @@ namespace Dredge_lung_test
     public class Fish : Sprite
     {
         private readonly float FishLayer = 0.8f;
-        // Changed from private to public to ensure it's accessible
         public Rectangle SourceRect { get; private set; }
         private Rectangle CollisionRect { get; set; }
         public string Name { get; private set; }
-        // List of anomalies for this fish
         public List<Anomaly> Anomalies { get; private set; }
         public static bool ShowCollisionRects = true;
 
-        // Property to check if the fish has any deadly anomalies
-        public bool HasDeadlyAnomaly
-        {
-            get
-            {
-                foreach (var anomaly in Anomalies)
-                {
-                    if (anomaly.IsDeadly)
-                        return true;
-                }
-                return false;
-            }
-        }
+        // Property to check if the fish has any anomalies
+        public bool HasAnomalies => Anomalies.Count > 0;
 
-        public Fish(string name, Vector2 position, float speed = 150, Rectangle sourceRect = default, Vector2? scale = null, Vector2? direction = null) : base(Globals.Content.Load<Texture2D>("Fish/FishTemplate"), position)
+        public Fish(string name, Vector2 position, float speed = 150, Rectangle sourceRect = default, Vector2? scale = null, Vector2? direction = null)
+            : base(Globals.Content.Load<Texture2D>("Fish/FishTemplate"), position)
         {
             Name = name;
             Speed = speed;
             Direction = direction ?? Direction;
 
-            // Initialize SourceRect properly - ensure it has valid dimensions
+            // Ensure valid source rectangle
             SourceRect = sourceRect.Width > 0 && sourceRect.Height > 0 ?
                 sourceRect : new Rectangle(0, 0, 100, 100);
 
             Scale = scale ?? Scale;
 
-            // Debug to verify source rectangle is set correctly
             Debug.WriteLine($"Fish '{Name}' created with source rect: {SourceRect}");
 
-            // Generate anomalies after fish is fully initialized
+            // Generate anomalies for this fish
             Anomalies = AnomalyManager.Instance.GenerateAnomaliesForFish(this);
         }
 
         public virtual void Update()
         {
             Movement();
-            // Flip the sprite based on direction while preserving initial mirroring
+            // Flip the sprite based on direction
             SpriteEffect = Direction.X > 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             UpdateCollisionRect();
         }
@@ -64,7 +51,6 @@ namespace Dredge_lung_test
 
         protected virtual void UpdateCollisionRect()
         {
-            // Use full dimensions of the source rectangle for collision
             int width = (int)(SourceRect.Width * Scale.X);
             int height = (int)(SourceRect.Height * Scale.Y);
             CollisionRect = new Rectangle(
@@ -78,7 +64,6 @@ namespace Dredge_lung_test
 
         public Rectangle GetSourceRect()
         {
-            // Debug output to verify what's being returned
             Debug.WriteLine($"GetSourceRect called for {Name}: {SourceRect}");
             return SourceRect;
         }
@@ -98,16 +83,16 @@ namespace Dredge_lung_test
                 FishLayer
             );
 
-            // Draw all anomalies on top of the fish
+            // Draw anomalies on top of the fish
             foreach (var anomaly in Anomalies)
             {
                 anomaly.Draw(Position, Scale, SpriteEffect, FishLayer);
             }
 
+            // Debug: Draw collision rectangle (always green now)
             if (ShowCollisionRects)
             {
-                Color debugColor = HasDeadlyAnomaly ? Color.Red : Color.Green;
-                DebugRenderer.DrawRectangle(CollisionRect, debugColor, 0.1f);
+                DebugRenderer.DrawRectangle(CollisionRect, Color.Green, 0.1f);
             }
         }
     }

@@ -10,27 +10,27 @@ namespace Dredge_lung_test
         private readonly List<UIElement> _uiElements = new List<UIElement>();
         private readonly List<IClickable> _clickables = new List<IClickable>();
         private List<Fish> _fishes;
-        private readonly CameraFrame _frame;
-        private readonly FishInspectionScreen _inspectionScreen;
+   //     private readonly CameraFrame _frame;
+       // private readonly FishInspectionScreen _inspectionScreen;
 
         public UIManager(List<Fish> fishes)
         {
             _fishes = fishes;
 
             // Create the fish inspection screen first
-            _inspectionScreen = new FishInspectionScreen();
-            _uiElements.Add(_inspectionScreen);
-            _clickables.Add(_inspectionScreen);
+           // _inspectionScreen = new FishInspectionScreen();
+           // _uiElements.Add(_inspectionScreen);
+          //  _clickables.Add(_inspectionScreen);
 
             // Then create the camera frame with a reference to the inspection screen
-            _frame = new CameraFrame(IM.MousePosition, _fishes, _inspectionScreen);
-            _uiElements.Add(_frame);
-            _clickables.Add(_frame);
+           // _frame = new CameraFrame(IM.MousePosition, _fishes, _inspectionScreen);
+           // _uiElements.Add(_frame);
+          //  _clickables.Add(_frame);
         }
 
         public void SetUpUI()
         {
-            AddButton(new Vector2(90, 50), Globals.Content.Load<Texture2D>("UI/cameraIcon"), Color.White, () =>
+/*            AddButton(new Vector2(90, 50), Globals.Content.Load<Texture2D>("UI/cameraIcon"), Color.White, () =>
             {
                 if (!_frame.IsVisible)
                 {
@@ -40,7 +40,7 @@ namespace Dredge_lung_test
                 {
                     _frame.IsVisible = false;
                 }
-            });
+            });*/
         }
 
         public Button AddButton(Vector2 position, Texture2D texture, Color color, Action onClick)
@@ -62,10 +62,10 @@ namespace Dredge_lung_test
         public void Update()
         {
             // Debug output for inspection screen
-            if (_inspectionScreen.IsVisible)
+/*            if (_inspectionScreen.IsVisible)
             {
                 //System.Diagnostics.Debug.WriteLine("Inspection screen is visible in UIManager.Update");
-            }
+            }*/
 
             foreach (var element in _uiElements)
             {
@@ -78,11 +78,11 @@ namespace Dredge_lung_test
             if (IM.MouseClicked)
             {
                // System.Diagnostics.Debug.WriteLine("Mouse clicked at " + IM.Cursor.Center);
-                ProcessMouseClick();
+               // ProcessMouseClick();
             }
         }
 
-        private void ProcessMouseClick()
+        /*private void ProcessMouseClick()
         {
             // Handle clicks for inspection screen first if it's visible and mouse is over it
             if (_inspectionScreen.IsVisible && _inspectionScreen.IsMouseOver(IM.Cursor))
@@ -114,7 +114,7 @@ namespace Dredge_lung_test
                     return;
                 }
             }
-        }
+        }*/
 
         public void Draw()
         {
@@ -148,7 +148,7 @@ namespace Dredge_lung_test
         }
 
         // Getter for statistics if needed elsewhere
-        public int GetCorrectAnswers() => _inspectionScreen.GetCorrectAnswers();
-        public int GetIncorrectAnswers() => _inspectionScreen.GetIncorrectAnswers();
+      //  public int GetCorrectAnswers() => _inspectionScreen.GetCorrectAnswers();
+      // public int GetIncorrectAnswers() => _inspectionScreen.GetIncorrectAnswers();
     }
 }

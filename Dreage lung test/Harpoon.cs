@@ -208,7 +208,7 @@ namespace Dredge_lung_test
             if (_caughtFish != null)
             {
                 // Determine if the fish has anomalies
-                bool hasAnomalies = _caughtFish.HasDeadlyAnomaly;
+                bool hasAnomalies = _caughtFish.HasAnomalies;
 
                 // Award points or deduct lives
                 if (hasAnomalies)

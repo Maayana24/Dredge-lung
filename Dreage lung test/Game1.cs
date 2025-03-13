@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-//acceleration
 namespace Dredge_lung_test
 {
     public class Game1 : Game
@@ -27,8 +26,8 @@ namespace Dredge_lung_test
             _graphics.ApplyChanges();
 
             Globals.GraphicsDevice = GraphicsDevice;
-            Globals.ScreenWidth = 1080;  // Your specified width
-            Globals.ScreenHeight = 1920; // Your specified height
+            Globals.ScreenWidth = 1080;
+            Globals.ScreenHeight = 1920;
             Globals.Content = Content;
             base.Initialize();
         }
@@ -53,8 +52,6 @@ namespace Dredge_lung_test
             // TODO: Add your update logic here
             Globals.Update(gameTime);
             _gm.Update();
-            System.Console.WriteLine("Mouse Left Button is Pressed!");
-
 
             base.Update(gameTime);
         }

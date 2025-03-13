@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+﻿/*using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
@@ -94,9 +94,9 @@ namespace Dredge_lung_test
             System.Diagnostics.Debug.WriteLine("Inspection screen closed");
         }
 
-        private void EvaluateAnswer(bool selectedDeadly)
+*//*        private void EvaluateAnswer(bool selectedDeadly)
         {
-            bool isCorrect = (selectedDeadly == _inspectedFish.HasDeadlyAnomaly);
+            bool isCorrect = (selectedDeadly == _inspectedFish.HasAnomaly);
 
             if (isCorrect)
             {
@@ -112,7 +112,7 @@ namespace Dredge_lung_test
             }
 
             System.Diagnostics.Debug.WriteLine($"Stats: Correct: {_correctAnswers}, Incorrect: {_incorrectAnswers}");
-        }
+        }*//*
 
         public override void Update()
         {
@@ -260,4 +260,4 @@ namespace Dredge_lung_test
         public int GetCorrectAnswers() => _correctAnswers;
         public int GetIncorrectAnswers() => _incorrectAnswers;
     }
-}
+}*/

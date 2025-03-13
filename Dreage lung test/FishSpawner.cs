@@ -15,17 +15,14 @@ namespace Dredge_lung_test
         private readonly float _maxSpawnTime = 2.0f;
         private float _nextSpawnTime;
 
-        private readonly int _screenWidth;
-        private readonly int _screenHeight;
+        private const int JellySpawnChance = 10; // Chance to spawn a Jelly
 
-        public FishSpawner(List<Fish> fishes, int screenWidth, int screenHeight)
+        public FishSpawner(List<Fish> fishes)
         {
             _activeFishes = fishes;
             _random = new Random();
             _spawnTimer = 0;
             _nextSpawnTime = GetRandomSpawnTime();
-            _screenWidth = screenWidth;
-            _screenHeight = screenHeight;
 
             // Ensure AnomalyManager is initialized
             AnomalyManager.Instance.ToString();
@@ -55,10 +52,8 @@ namespace Dredge_lung_test
 
         private void SpawnRandomFish()
         {
-            // 1 in 10 chance to spawn a Jelly (bottom to top)
-            bool spawnJelly = _random.Next(10) == 0;
-
-            if (spawnJelly)
+            // 1 in 10 chance to spawn a Jelly
+            if (_random.Next(JellySpawnChance) == 0)
             {
                 SpawnJelly();
             }
@@ -75,8 +70,8 @@ namespace Dredge_lung_test
         private void SpawnJelly()
         {
             // Spawn at random x position at the bottom of the screen
-            int xPos = _random.Next(100, _screenWidth - 100);
-            Vector2 position = new Vector2(xPos, _screenHeight + 50); // Start below the screen
+            int xPos = _random.Next(100, Globals.ScreenWidth - 100);
+            Vector2 position = new Vector2(xPos, Globals.ScreenHeight + 50); // Start below the screen
 
             Rectangle sourceRect = new Rectangle(150, 210, 250, 300);
             Debug.WriteLine($"Creating Jelly with source rect: {sourceRect}");
@@ -88,48 +83,11 @@ namespace Dredge_lung_test
         private void SpawnFish(int fishType, bool leftToRight)
         {
             // Set starting position based on direction (off-screen)
-            float xPos = leftToRight ? -100 : _screenWidth + 100; // Off-screen position
-            float yPos = _random.Next(200, _screenHeight - 200); // Random y position
+            float xPos = leftToRight ? -100 : Globals.ScreenWidth + 100; // Off-screen position
+            float yPos = _random.Next(200, Globals.ScreenHeight - 200); // Random y position
             Vector2 position = new Vector2(xPos, yPos);
 
-            Rectangle sourceRect;
-            String fishName;
-            Vector2 scale;
-            float speed;
-
-            switch (fishType)
-            {
-                case 0:
-                    fishName = "Grouper";
-                    sourceRect = new Rectangle(275, 50, 175, 105);
-                    scale = new Vector2(0.6f, 0.6f);
-                    speed = 150;
-                    break;
-                case 1:
-                    fishName = "Angler";
-                    sourceRect = new Rectangle(600, 10, 250, 175);
-                    scale = new Vector2(0.5f, 0.5f);
-                    speed = 180;
-                    break;
-                case 2:
-                    fishName = "Eel";
-                    sourceRect = new Rectangle(450, 250, 350, 200);
-                    scale = new Vector2(0.5f, 0.5f);
-                    speed = 220;
-                    break;
-                case 3:
-                    fishName = "Shark";
-                    sourceRect = new Rectangle(150, 550, 600, 200);
-                    scale = new Vector2(0.3f, 0.3f);
-                    speed = 100;
-                    break;
-                default:
-                    fishName = "Grouper";
-                    sourceRect = new Rectangle(275, 50, 175, 105);
-                    scale = new Vector2(0.6f, 0.6f);
-                    speed = 150;
-                    break;
-            }
+            (string fishName, Rectangle sourceRect, Vector2 scale, float speed) = GetFishAttributes(fishType);
 
             Debug.WriteLine($"Creating {fishName} with source rect: {sourceRect}");
 
@@ -140,6 +98,23 @@ namespace Dredge_lung_test
             fish.Direction = leftToRight ? new Vector2(1, 0) : new Vector2(-1, 0);
 
             _activeFishes.Add(fish);
+        }
+
+        private (string fishName, Rectangle sourceRect, Vector2 scale, float speed) GetFishAttributes(int fishType)
+        {
+            switch (fishType)
+            {
+                case 0:
+                    return ("Grouper", new Rectangle(275, 50, 175, 105), new Vector2(0.6f, 0.6f), 150);
+                case 1:
+                    return ("Angler", new Rectangle(600, 10, 250, 175), new Vector2(0.5f, 0.5f), 180);
+                case 2:
+                    return ("Eel", new Rectangle(450, 250, 350, 200), new Vector2(0.5f, 0.5f), 220);
+                case 3:
+                    return ("Shark", new Rectangle(150, 550, 600, 200), new Vector2(0.3f, 0.3f), 100);
+                default:
+                    return ("Grouper", new Rectangle(275, 50, 175, 105), new Vector2(0.6f, 0.6f), 150);
+            }
         }
 
         private void UpdateActiveFishes()
@@ -169,9 +144,9 @@ namespace Dredge_lung_test
             const int margin = 200;
 
             return fish.Position.X < -margin ||
-                   fish.Position.X > _screenWidth + margin ||
+                   fish.Position.X > Globals.ScreenWidth + margin ||
                    fish.Position.Y < -margin ||
-                   fish.Position.Y > _screenHeight + margin;
+                   fish.Position.Y > Globals.ScreenHeight + margin;
         }
     }
 }
