@@ -9,7 +9,7 @@ namespace Dredge_lung_test
         public readonly Texture2D Texture;
         protected readonly Vector2 Origin;
 
-        public Vector2 Position { get; protected set; }
+        public Vector2 Position { get;  set; }
         public Vector2 Direction { get; set; } = new Vector2(1, 0);
         public float Speed { get; protected set; }
         public Vector2 Scale { get; protected set; } = Vector2.One;

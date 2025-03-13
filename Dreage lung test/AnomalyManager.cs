@@ -43,13 +43,13 @@ namespace Dredge_lung_test
             try
             {
                 // Debug the content paths
-                Debug.WriteLine("Attempting to load anomaly textures...");
+              //  Debug.WriteLine("Attempting to load anomaly textures...");
 
                 // Load ExtraLimbs texture
                 try
                 {
                     _extraLimbsTexture = Globals.Content.Load<Texture2D>("ExtraLimbs");
-                    Debug.WriteLine("Loaded ExtraLimbs texture from root directory");
+               //     Debug.WriteLine("Loaded ExtraLimbs texture from root directory");
                 }
                 catch
                 {
@@ -57,11 +57,11 @@ namespace Dredge_lung_test
                     {
                         // Try with Fish subdirectory
                         _extraLimbsTexture = Globals.Content.Load<Texture2D>("Fish/ExtraLimbs");
-                        Debug.WriteLine("Loaded ExtraLimbs texture from Fish subdirectory");
+                  //      Debug.WriteLine("Loaded ExtraLimbs texture from Fish subdirectory");
                     }
                     catch (Exception ex)
                     {
-                        Debug.WriteLine($"Failed to load ExtraLimbs texture: {ex.Message}");
+                 //       Debug.WriteLine($"Failed to load ExtraLimbs texture: {ex.Message}");
                         // Create fallback texture
                         _extraLimbsTexture = CreateFallbackTexture(Color.Purple);
                     }
@@ -71,7 +71,7 @@ namespace Dredge_lung_test
                 try
                 {
                     _inflammationTexture = Globals.Content.Load<Texture2D>("InflammationD");
-                    Debug.WriteLine("Loaded Inflammation texture from root directory");
+                //    Debug.WriteLine("Loaded Inflammation texture from root directory");
                 }
                 catch
                 {
@@ -79,31 +79,31 @@ namespace Dredge_lung_test
                     {
                         // Try with Fish subdirectory
                         _inflammationTexture = Globals.Content.Load<Texture2D>("Fish/InflammationD");
-                        Debug.WriteLine("Loaded Inflammation texture from Fish subdirectory");
+                     //   Debug.WriteLine("Loaded Inflammation texture from Fish subdirectory");
                     }
                     catch (Exception ex)
                     {
-                        Debug.WriteLine($"Failed to load Inflammation texture: {ex.Message}");
+                     //   Debug.WriteLine($"Failed to load Inflammation texture: {ex.Message}");
                         // Create fallback texture
                         _inflammationTexture = CreateFallbackTexture(Color.Red);
                     }
                 }
 
                 // Verify textures were loaded
-                Debug.WriteLine($"ExtraLimbs texture dimensions: {_extraLimbsTexture.Width}x{_extraLimbsTexture.Height}");
-                Debug.WriteLine($"Inflammation texture dimensions: {_inflammationTexture.Width}x{_inflammationTexture.Height}");
+              //  Debug.WriteLine($"ExtraLimbs texture dimensions: {_extraLimbsTexture.Width}x{_extraLimbsTexture.Height}");
+              //  Debug.WriteLine($"Inflammation texture dimensions: {_inflammationTexture.Width}x{_inflammationTexture.Height}");
 
                 return true;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"ERROR loading anomaly textures: {ex.Message}");
+            //    Debug.WriteLine($"ERROR loading anomaly textures: {ex.Message}");
 
                 // Create fallback textures
                 _extraLimbsTexture = CreateFallbackTexture(Color.Purple);
                 _inflammationTexture = CreateFallbackTexture(Color.Red);
 
-                Debug.WriteLine("Created fallback textures");
+            //    Debug.WriteLine("Created fallback textures");
                 return false;
             }
         }
@@ -126,19 +126,19 @@ namespace Dredge_lung_test
             // Check if textures were loaded properly
             if (!TexturesLoaded)
             {
-                Debug.WriteLine("WARNING: Textures not loaded, using fallback textures");
+           //     Debug.WriteLine("WARNING: Textures not loaded, using fallback textures");
             }
 
             // Access the fish's source rectangle directly from the property
             Rectangle sourceRect = fish.SourceRect;
 
             // Debug output - make sure we're getting proper source rectangle
-            Debug.WriteLine($"Creating anomaly for {fish.Name} with source rect: {sourceRect}");
+          //  Debug.WriteLine($"Creating anomaly for {fish.Name} with source rect: {sourceRect}");
 
             // Make sure the source rectangle is valid
             if (sourceRect.Width <= 0 || sourceRect.Height <= 0)
             {
-                Debug.WriteLine($"WARNING: Invalid source rectangle for fish {fish.Name}. Using default rectangle.");
+               // Debug.WriteLine($"WARNING: Invalid source rectangle for fish {fish.Name}. Using default rectangle.");
                 sourceRect = new Rectangle(0, 0, 100, 100); // Fallback rectangle
             }
 
@@ -166,12 +166,12 @@ namespace Dredge_lung_test
                     // Create the anomaly
                     anomalies.Add(new Anomaly(selectedType, isDeadly, texture, sourceRect, fallbackColor));
 
-                    Debug.WriteLine($"Added {selectedType} anomaly to {fish.Name}, deadly: {isDeadly}");
+                    //Debug.WriteLine($"Added {selectedType} anomaly to {fish.Name}, deadly: {isDeadly}");
                 }
             }
             else
             {
-                Debug.WriteLine($"No anomalies generated for {fish.Name}");
+               // Debug.WriteLine($"No anomalies generated for {fish.Name}");
             }
 
             return anomalies;

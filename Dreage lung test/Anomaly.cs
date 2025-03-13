@@ -33,12 +33,11 @@ namespace Dredge_lung_test
             _id = _idCounter++;
 
             // Debug output on creation
-            Console.WriteLine($"Anomaly #{_id} created: Type={type}, Deadly={isDeadly}, SourceRect={sourceRect}");
+           // Console.WriteLine($"Anomaly #{_id} created: Type={type}, Deadly={isDeadly}, SourceRect={sourceRect}");
         }
 
         // Overload without fallback color
-        public Anomaly(AnomalyType type, bool isDeadly, Texture2D texture, Rectangle sourceRect)
-            : this(type, isDeadly, texture, sourceRect, Color.White)
+        public Anomaly(AnomalyType type, bool isDeadly, Texture2D texture, Rectangle sourceRect) : this(type, isDeadly, texture, sourceRect, Color.White)
         {
         }
 
@@ -65,12 +64,7 @@ namespace Dredge_lung_test
                 // This creates a simple visible indicator that the anomaly exists
                 int width = (int)(SourceRect.Width * scale.X * 0.5f);  // Make it smaller than fish
                 int height = (int)(SourceRect.Height * scale.Y * 0.5f);
-                Rectangle bounds = new Rectangle(
-                    (int)(position.X - width / 2),
-                    (int)(position.Y - height / 2),
-                    width,
-                    height
-                );
+                Rectangle bounds = new Rectangle((int)(position.X - width / 2), (int)(position.Y - height / 2), width, height);
 
                 // Draw fallback rectangle
                 Texture2D pixel = new Texture2D(Globals.GraphicsDevice, 1, 1);
@@ -83,7 +77,7 @@ namespace Dredge_lung_test
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"ERROR drawing anomaly #{_id}: {ex.Message}");
+                //Console.WriteLine($"ERROR drawing anomaly #{_id}: {ex.Message}");
             }
         }
     }

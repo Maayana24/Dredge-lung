@@ -51,12 +51,20 @@ namespace Dredge_lung_test
             return button;
         }
 
+        public Text AddText(Vector2 position, string text, Color color)
+        {
+            Text textElement = new Text(Globals.Font, text, position, color);
+           // _uiElements.Add(textElement);
+            AddElement(textElement);
+            return textElement;
+        }
+
         public void Update()
         {
             // Debug output for inspection screen
             if (_inspectionScreen.IsVisible)
             {
-                System.Diagnostics.Debug.WriteLine("Inspection screen is visible in UIManager.Update");
+                //System.Diagnostics.Debug.WriteLine("Inspection screen is visible in UIManager.Update");
             }
 
             foreach (var element in _uiElements)
@@ -69,7 +77,7 @@ namespace Dredge_lung_test
 
             if (IM.MouseClicked)
             {
-                System.Diagnostics.Debug.WriteLine("Mouse clicked at " + IM.Cursor.Center);
+               // System.Diagnostics.Debug.WriteLine("Mouse clicked at " + IM.Cursor.Center);
                 ProcessMouseClick();
             }
         }
@@ -79,7 +87,7 @@ namespace Dredge_lung_test
             // Handle clicks for inspection screen first if it's visible and mouse is over it
             if (_inspectionScreen.IsVisible && _inspectionScreen.IsMouseOver(IM.Cursor))
             {
-                System.Diagnostics.Debug.WriteLine("Handling click on inspection screen");
+               // System.Diagnostics.Debug.WriteLine("Handling click on inspection screen");
                 _inspectionScreen.Click();
                 return;
             }
@@ -87,7 +95,7 @@ namespace Dredge_lung_test
             // Then handle camera frame if it's visible
             if (_frame.IsVisible && _frame.IsMouseOver(IM.Cursor))
             {
-                System.Diagnostics.Debug.WriteLine("Handling click on camera frame");
+               // System.Diagnostics.Debug.WriteLine("Handling click on camera frame");
                 _frame.Click();
                 return;
             }

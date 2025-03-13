@@ -21,8 +21,10 @@ namespace Dredge_lung_test
         private float _defaultY; // Store the default Y position
         public static bool ShowCollisionRects = true;
 
+        // Property to allow access to the Bounds
+        public new Rectangle Bounds { get; private set; }
 
-        public Player(Texture2D texture, Vector2 position) : base(texture, position) 
+        public Player(Texture2D texture, Vector2 position) : base(texture, position)
         {
             //this.Texture = tex;
             Speed = 400;
@@ -32,13 +34,13 @@ namespace Dredge_lung_test
             _defaultY = position.Y;
             spriteWidth = Texture.Width * Scale.X;
             spriteHeight = Texture.Height * Scale.Y;
+
+            // Initialize bounds
+            Bounds = new Rectangle((int)Position.X, (int)Position.Y, (int)spriteWidth, (int)spriteHeight);
         }
-
-
 
         public void Update()
         {
-
             Movement();
             Bounds = new Rectangle((int)Position.X, (int)Position.Y, (int)spriteWidth, (int)spriteHeight);
         }
@@ -163,16 +165,15 @@ namespace Dredge_lung_test
             Position += _velocity * Globals.DeltaTime;
 
             // Calculate sprite dimensions
-
+            spriteWidth = Texture.Width * Scale.X;
+            spriteHeight = Texture.Height * Scale.Y;
 
             // Keep player within screen bounds
             Position = new Vector2(
                 MathHelper.Clamp(Position.X, 0, Globals.ScreenWidth - spriteWidth),
                 MathHelper.Clamp(Position.Y, 0, Globals.ScreenHeight - spriteHeight)
             );
-
         }
-
 
         public override void Draw()
         {
