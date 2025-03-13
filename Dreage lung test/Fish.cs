@@ -9,7 +9,7 @@ namespace Dredge_lung_test
     {
         private readonly float FishLayer = 0.8f;
         public Rectangle SourceRect { get; private set; }
-        private Rectangle CollisionRect { get; set; }
+        private Rectangle CollisionRect { get;  set; }
         public string Name { get; private set; }
         public List<Anomaly> Anomalies { get; private set; }
         public static bool ShowCollisionRects = true;
@@ -30,7 +30,6 @@ namespace Dredge_lung_test
 
             Scale = scale ?? Scale;
 
-            Debug.WriteLine($"Fish '{Name}' created with source rect: {SourceRect}");
 
             // Generate anomalies for this fish
             Anomalies = AnomalyManager.Instance.GenerateAnomaliesForFish(this);
@@ -64,7 +63,6 @@ namespace Dredge_lung_test
 
         public Rectangle GetSourceRect()
         {
-            Debug.WriteLine($"GetSourceRect called for {Name}: {SourceRect}");
             return SourceRect;
         }
 

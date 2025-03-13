@@ -74,7 +74,6 @@ namespace Dredge_lung_test
             Vector2 position = new Vector2(xPos, Globals.ScreenHeight + 50); // Start below the screen
 
             Rectangle sourceRect = new Rectangle(150, 210, 250, 300);
-            Debug.WriteLine($"Creating Jelly with source rect: {sourceRect}");
 
             Fish jelly = new Fish("Jelly", position, 120, sourceRect, new Vector2(0.5f, 0.5f), new Vector2(0, -1));
             _activeFishes.Add(jelly);
@@ -89,7 +88,6 @@ namespace Dredge_lung_test
 
             (string fishName, Rectangle sourceRect, Vector2 scale, float speed) = GetFishAttributes(fishType);
 
-            Debug.WriteLine($"Creating {fishName} with source rect: {sourceRect}");
 
             // Create the fish with the determined parameters
             Fish fish = new Fish(fishName, position, speed, sourceRect, scale);

@@ -15,7 +15,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI Classes", "UI Classes", "{EFAE9985-FD1F-4AA5-9B03-67B7A0A2EF00}"
 	ProjectSection(SolutionItems) = preProject
 		Dreage lung test\Button.cs = Dreage lung test\Button.cs
-		Dreage lung test\CameraFrame.cs = Dreage lung test\CameraFrame.cs
 		Dreage lung test\UIElement.cs = Dreage lung test\UIElement.cs
 	EndProjectSection
 EndProject
@@ -41,15 +40,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{
 		Dreage lung test\Sprite.cs = Dreage lung test\Sprite.cs
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Fish", "Fish", "{E2C49FD0-18D2-44BA-A2A6-4785863FDC3D}"
-	ProjectSection(SolutionItems) = preProject
-		Dreage lung test\Angler.cs = Dreage lung test\Angler.cs
-		Dreage lung test\Eel.cs = Dreage lung test\Eel.cs
-		Dreage lung test\Grouper.cs = Dreage lung test\Grouper.cs
-		Dreage lung test\Jelly.cs = Dreage lung test\Jelly.cs
-		Dreage lung test\Shark.cs = Dreage lung test\Shark.cs
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +61,5 @@ Global
 		{08DB0E47-862E-4FA4-8BE9-DE6AA8513B46} = {E665BBD4-633C-4F1C-A46A-DC6AC769596F}
 		{B62AB3E7-302A-4D04-9192-ACB52933782B} = {E665BBD4-633C-4F1C-A46A-DC6AC769596F}
 		{91899F17-79E8-4B3F-B9E8-66ADE02BB71C} = {E665BBD4-633C-4F1C-A46A-DC6AC769596F}
-		{E2C49FD0-18D2-44BA-A2A6-4785863FDC3D} = {E665BBD4-633C-4F1C-A46A-DC6AC769596F}
 	EndGlobalSection
 EndGlobal

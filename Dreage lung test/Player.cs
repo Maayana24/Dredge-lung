@@ -26,7 +26,6 @@ namespace Dredge_lung_test
 
         public Player(Texture2D texture, Vector2 position) : base(texture, position)
         {
-            //this.Texture = tex;
             Speed = 400;
             Scale = new Vector2(0.15f, 0.15f);
             Position = position;
@@ -34,15 +33,12 @@ namespace Dredge_lung_test
             _defaultY = position.Y;
             spriteWidth = Texture.Width * Scale.X;
             spriteHeight = Texture.Height * Scale.Y;
-
-            // Initialize bounds
-            Bounds = new Rectangle((int)Position.X, (int)Position.Y, (int)spriteWidth, (int)spriteHeight);
         }
 
         public void Update()
         {
             Movement();
-            Bounds = new Rectangle((int)Position.X, (int)Position.Y, (int)spriteWidth, (int)spriteHeight);
+            Bounds = new Rectangle((int)Position.X + 15, (int)Position.Y + 8, 175, 106);
         }
 
         private void Movement()

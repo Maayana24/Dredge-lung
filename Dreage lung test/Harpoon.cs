@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Dredge_lung_test
 {
@@ -68,8 +67,6 @@ namespace Dredge_lung_test
 
         public void Update()
         {
-            Debug.WriteLine("State: " + _state);
-
             // Handle cooldown first
             if (_state == HarpoonState.COOLDOWN)
             {

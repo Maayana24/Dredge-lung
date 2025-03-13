@@ -14,59 +14,27 @@ namespace Dredge_lung_test
         // Textures for each anomaly type
         private Texture2D _extraLimbsTexture;
         private Texture2D _inflammationTexture;
-        // Flag to track if textures loaded successfully
+
         public bool TexturesLoaded { get; private set; } = false;
 
         // Constructor is private for singleton pattern
         private AnomalyManager()
         {
-            TexturesLoaded = LoadTextures();
-            // Debug message to confirm initialization
-            Console.WriteLine($"AnomalyManager initialized. Textures loaded: {TexturesLoaded}");
+            LoadTextures();
         }
 
         // Singleton instance access
-        public static AnomalyManager Instance
+        public static AnomalyManager Instance => _instance ??= new AnomalyManager();
+
+        private void LoadTextures()
         {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new AnomalyManager();
-                }
-                return _instance;
-            }
+            _extraLimbsTexture = Globals.Content.Load<Texture2D>("Fish/ExtraLimbs");
+            _inflammationTexture = Globals.Content.Load<Texture2D>("Fish/InflammationD");
         }
 
-        private bool LoadTextures()
-        {
-            try
-            {
-                // Load ExtraLimbs texture
-                _extraLimbsTexture = Globals.Content.Load<Texture2D>("ExtraLimbs");
-                // Load Inflammation texture
-                _inflammationTexture = Globals.Content.Load<Texture2D>("InflammationD");
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"ERROR loading anomaly textures: {ex.Message}");
-                return false;
-            }
-        }
-
-        // Generate random anomalies for a fish
         public List<Anomaly> GenerateAnomaliesForFish(Fish fish)
         {
             List<Anomaly> anomalies = new List<Anomaly>();
-
-            if (!TexturesLoaded)
-            {
-                // Debug warning when textures are not loaded
-                Console.WriteLine("WARNING: Textures not loaded");
-                return anomalies; // Return empty list if textures are not loaded
-            }
 
             Rectangle sourceRect = fish.SourceRect;
 
@@ -75,7 +43,7 @@ namespace Dredge_lung_test
                 sourceRect = new Rectangle(0, 0, 100, 100);
             }
 
-            if (_random.NextDouble() < 0.7)
+            if (_random.NextDouble() < 0.4)
             {
                 int anomalyCount = _random.Next(1, 3);
 
@@ -83,6 +51,7 @@ namespace Dredge_lung_test
                 {
                     AnomalyType selectedType = (AnomalyType)_random.Next(Enum.GetValues(typeof(AnomalyType)).Length);
                     Texture2D texture = GetTextureForAnomalyType(selectedType);
+                    Color fallbackColor = selectedType == AnomalyType.ExtraLimbs ? Color.Purple : Color.Red;
 
                     anomalies.Add(new Anomaly(selectedType, texture, sourceRect));
                 }
@@ -91,13 +60,14 @@ namespace Dredge_lung_test
             return anomalies;
         }
 
+
         private Texture2D GetTextureForAnomalyType(AnomalyType type)
         {
             return type switch
             {
                 AnomalyType.ExtraLimbs => _extraLimbsTexture,
                 AnomalyType.Inflammation => _inflammationTexture,
-                _ => _extraLimbsTexture
+                _ => _extraLimbsTexture,
             };
         }
     }
