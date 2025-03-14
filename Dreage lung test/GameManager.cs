@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 
 namespace Dredge_lung_test
 {
@@ -35,6 +36,9 @@ namespace Dredge_lung_test
             // Initialize score manager
             _scoreManager = new ScoreManager(3); // Start with 3 lives
             _scoreManager.GameOver += OnGameOver;
+
+            Globals.Font = Globals.Content.Load<SpriteFont>("Fonts/Defult");
+
 
             InitializeLayerableObjects();
 

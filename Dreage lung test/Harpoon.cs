@@ -252,10 +252,6 @@ namespace Dredge_lung_test
                 {
                     _scoreManager.AddPoints(1);
                 }
-                else
-                {
-                    _scoreManager.RemoveLife();
-                }
 
                 // Fish should deactivate itself (unregister from CollisionManager)
                 _caughtFish.Deactivate();

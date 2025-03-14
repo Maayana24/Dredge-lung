@@ -39,7 +39,6 @@ namespace Dredge_lung_test
             Globals.SpriteBatch = _spriteBatch;
 
             // TODO: use this.Content to load your game content here
-            Globals.Font = Content.Load<SpriteFont>("Fonts/Defult");
             _gm = new();
             DebugRenderer.Initialize(GraphicsDevice);
         }
