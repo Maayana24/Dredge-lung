@@ -2,20 +2,24 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Dredge_lung_test
 {
     public class GameManager
     {
+        private List<ILayerable> _layerableObjects = new List<ILayerable>();
         private readonly BGM _bgm = new();
         private readonly Player _player;
         private List<Fish> _fishes;
-        private List<Rock> _rocks; // Added rocks list
+        private List<Rock> _rocks;
         private readonly UIManager _ui;
         private readonly FishSpawner _fishSpawner;
-        private readonly RockSpawner _rockSpawner; // Added rock spawner
+        private readonly RockSpawner _rockSpawner;
         private ScoreManager _scoreManager;
         private readonly Harpoon _harpoon;
+        private DifficultyManager _difficultyManager;
+        private HighScoreManager _highScoreManager;
 
         // Game state
         private bool _isGameOver = false;
@@ -24,16 +28,21 @@ namespace Dredge_lung_test
         {
             // Initialize fish and rock lists
             _fishes = new List<Fish>();
-            _rocks = new List<Rock>(); // Initialize rocks list
-
+            _rocks = new List<Rock>();
+            _highScoreManager = new HighScoreManager();
             _ui = new UIManager(_fishes);
 
             // Initialize score manager
             _scoreManager = new ScoreManager(3); // Start with 3 lives
             _scoreManager.GameOver += OnGameOver;
 
+            InitializeLayerableObjects();
+
+            _difficultyManager = new DifficultyManager();
+
             // Set up UI after score manager is initialized
             _ui.SetUpUI();
+
 
             // Connect score manager events to UI updates
             _scoreManager.ScoreChanged += (sender, e) => _ui.UpdateScoreText(_scoreManager.Score);
@@ -48,24 +57,29 @@ namespace Dredge_lung_test
             _bgm.AddLayer(new Layer(LoadAndRotateTexture("9"), 0.5f, 0.4f));
 
             // Create player
-            _player = new Player(Globals.Content.Load<Texture2D>("Fish/Submarine"), new Vector2(300, 300));
+            _player = new Player(Globals.Content.Load<Texture2D>("Fish/Submarine"), new Vector2(300, 300), _scoreManager);
 
             // Initialize harpoon
             _harpoon = new Harpoon(_player, _fishes, _scoreManager);
 
-            // Create fish spawner with screen dimensions
+            // Create fish spawner
             _fishSpawner = new FishSpawner(_fishes);
 
             // Create rock spawner
             _rockSpawner = new RockSpawner(
                 _rocks,
-                Globals.Content.Load<Texture2D>("Obstacles/Rocks"), // Load rock texture
+                Globals.Content.Load<Texture2D>("Rocks"),
                 _scoreManager
             );
+
+            _difficultyManager.DifficultyChanged += _fishSpawner.OnDifficultyChanged;
+            _difficultyManager.DifficultyChanged += _rockSpawner.OnDifficultyChanged;
+            _difficultyManager.DifficultyChanged += OnBGMDifficultyChanged;
 
             // Initial UI update
             _ui.UpdateScoreText(_scoreManager.Score);
             _ui.UpdateLivesText(_scoreManager.Lives);
+            _ui.UpdateHighScoreText(_highScoreManager.GetHighestScore());
         }
 
         public void Update()
@@ -78,6 +92,10 @@ namespace Dredge_lung_test
             IM.Update();
             _bgm.Update(-200);
             _player.Update();
+            _difficultyManager.Update();
+
+            // Update collision manager
+            CollisionManager.Instance.CheckCollisions();
 
             // Update harpoon
             _harpoon.Update();
@@ -99,9 +117,6 @@ namespace Dredge_lung_test
             // Update rock spawner
             _rockSpawner.Update();
 
-            // Check if player collides with any rocks
-            _rockSpawner.CheckPlayerCollision(_player);
-
             // Update all active fish
             foreach (Fish fish in new List<Fish>(_fishes)) // Create a copy to avoid collection modified exception
             {
@@ -112,6 +127,48 @@ namespace Dredge_lung_test
             foreach (Rock rock in new List<Rock>(_rocks)) // Create a copy to avoid collection modified exception
             {
                 rock.Update();
+            }
+        }
+
+        private void OnBGMDifficultyChanged(int level, float speedMultiplier, float spawnRateMultiplier)
+        {
+            // Update BGM speed to match the rock speed multiplier
+            _bgm.SetSpeedMultiplier(speedMultiplier);
+        }
+
+        private void InitializeLayerableObjects()
+        {
+            // Add all layerable objects to the list
+            _layerableObjects.Add(_bgm); // Add single instance, not as a collection
+
+            // Add collections of objects
+            foreach (var fish in _fishes)
+            {
+                if (fish is ILayerable layerable)
+                    _layerableObjects.Add(layerable);
+            }
+
+            foreach (var rock in _rocks)
+            {
+                if (rock is ILayerable layerable)
+                    _layerableObjects.Add(layerable);
+            }
+
+            // Add other layerable objects
+
+            // Update layer depths
+            UpdateAllLayerDepths();
+        }
+
+        private void UpdateAllLayerDepths()
+        {
+            // Sort by ZIndex
+            _layerableObjects = _layerableObjects.OrderBy(l => l.ZIndex).ToList();
+
+            // Update all layer depths
+            foreach (var layer in _layerableObjects)
+            {
+                layer.UpdateLayerDepth();
             }
         }
 
@@ -142,12 +199,25 @@ namespace Dredge_lung_test
         {
             _isGameOver = true;
             _ui.ShowGameOver(true);
+
+            // Save the score when game is over
+            _highScoreManager.AddScore(_scoreManager.Score);
+
+            // Update UI to show high score
+            _ui.UpdateHighScoreText(_highScoreManager.GetHighestScore());
         }
 
         public void Reset()
         {
+            // Unregister all collidables (requires adding this code to all collidable classes)
+            foreach (Rock rock in _rocks)
+            {
+                CollisionManager.Instance.Unregister(rock);
+            }
+
+            _difficultyManager.Reset();
             _fishes.Clear();
-            _rocks.Clear(); // Clear rocks too
+            _rocks.Clear();
             _scoreManager.Reset();
             _isGameOver = false;
             _ui.ShowGameOver(false);
@@ -155,7 +225,7 @@ namespace Dredge_lung_test
             _ui.UpdateLivesText(_scoreManager.Lives);
         }
 
-        private Texture2D LoadAndRotateTexture(string assetName) //maybe theres a simpler way?
+        private Texture2D LoadAndRotateTexture(string assetName)
         {
             Texture2D original = Globals.Content.Load<Texture2D>("Background/" + assetName);
             RenderTarget2D rotated = new RenderTarget2D(Globals.SpriteBatch.GraphicsDevice, original.Height, original.Width);

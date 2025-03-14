@@ -10,8 +10,10 @@ namespace Dredge_lung_test
         Inflammation
     }
 
-    public class Anomaly
+    public class Anomaly : ILayerable
     {
+        public float LayerDepth { get; set; } = 0.7f;
+        public int ZIndex { get; set; } = 0;
         public AnomalyType Type { get; private set; }
         public Texture2D Texture { get; private set; }
         public Rectangle SourceRect { get; private set; }
@@ -28,21 +30,31 @@ namespace Dredge_lung_test
             SourceRect = sourceRect;
             _id = _idCounter++;
         }
+        public void UpdateLayerDepth()
+        {
+            // Base anomaly depth
+            float baseDepth = 0.7f;
+            float zIndexContribution = ZIndex / 100.0f;
+
+            LayerDepth = baseDepth + zIndexContribution;
+            LayerDepth = MathHelper.Clamp(LayerDepth, 0.0f, 1.0f);
+        }
+
 
         public void Draw(Vector2 position, Vector2 scale, SpriteEffects spriteEffect, float layerDepth)
         {
             try
             {
                 Globals.SpriteBatch.Draw(
-                    Texture,
-                    position,
-                    SourceRect,
-                    Color.White,
-                    0,
-                    new Vector2(SourceRect.Width / 2, SourceRect.Height / 2),
-                    scale,
-                    spriteEffect,
-                    layerDepth + 0.01f
+                Texture,
+                position,
+                SourceRect,
+                Color.White,
+                0,
+                new Vector2(SourceRect.Width / 2, SourceRect.Height / 2),
+                scale,
+                spriteEffect,
+                LayerDepth 
                 );
 
                 int width = (int)(SourceRect.Width * scale.X * 0.5f);

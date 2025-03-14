@@ -10,32 +10,35 @@ namespace Dredge_lung_test
         private readonly List<Rock> _activeRocks;
         private readonly Random _random;
         private float _spawnTimer;
-        private readonly float _minSpawnTime = 1.5f; // Slower spawn rate than fish
-        private readonly float _maxSpawnTime = 4.0f;
+        private float _baseMinSpawnTime = 3;
+        private float _baseMaxSpawnTime = 4;
+        private float _currentMinSpawnTime;
+        private float _currentMaxSpawnTime;
         private float _nextSpawnTime;
         private readonly Texture2D _rockTexture;
         private readonly ScoreManager _scoreManager;
+        private float _speedMultiplier = 1;
 
         // Rock attributes - manually defined rectangles for each rock type
         private readonly Rectangle[] _rockRects = new Rectangle[]
         {
             new Rectangle(50, 50, 200, 200),    // Rock type 0 - Update these values
-            new Rectangle(50, 50, 200, 200),  // Rock type 1 - with your actual 
-            new Rectangle(50, 50, 200, 200),  // Rock type 2 - sprite sheet
-            new Rectangle(50, 50, 200, 200),  // Rock type 3 - coordinates and
+            new Rectangle(50, 50, 200, 200),    // Rock type 1 - with your actual 
+            new Rectangle(50, 50, 200, 200),    // Rock type 2 - sprite sheet
+            new Rectangle(50, 50, 200, 200),    // Rock type 3 - coordinates and
             new Rectangle(50, 50, 200, 200),    // Rock type 4 - dimensions
-            new Rectangle(50, 50, 200, 200)   // Rock type 5
+            new Rectangle(50, 50, 200, 200)     // Rock type 5
         };
 
         // Scale variations for different rock types
         private readonly Vector2[] _rockScales = new Vector2[]
         {
-            new Vector2(1f, 1f),  // Rock type 0
-            new Vector2(1f, 1f),  // Rock type 1
-            new Vector2(1f, 1f),  // Rock type 2
-            new Vector2(1f, 1f),  // Rock type 3
-            new Vector2(1f, 1f),  // Rock type 4
-            new Vector2(1f, 1f)   // Rock type 5
+            new Vector2(0.5f, 0.5f),  // Rock type 0
+            new Vector2(0.5f, 0.5f),  // Rock type 1
+            new Vector2(0.5f, 0.5f),  // Rock type 2
+            new Vector2(0.5f, 0.5f),  // Rock type 3
+            new Vector2(0.5f, 0.5f),  // Rock type 4
+            new Vector2(0.5f, 0.5f)   // Rock type 5
         };
 
         public RockSpawner(List<Rock> rocks, Texture2D rockTexture, ScoreManager scoreManager)
@@ -43,6 +46,8 @@ namespace Dredge_lung_test
             _activeRocks = rocks;
             _random = new Random();
             _spawnTimer = 0;
+            _currentMinSpawnTime = _baseMinSpawnTime;
+            _currentMaxSpawnTime = _baseMaxSpawnTime;
             _nextSpawnTime = GetRandomSpawnTime();
             _rockTexture = rockTexture;
             _scoreManager = scoreManager;
@@ -65,9 +70,18 @@ namespace Dredge_lung_test
             UpdateActiveRocks();
         }
 
+        public void OnDifficultyChanged(int level, float speedMultiplier, float spawnRateMultiplier)
+        {
+            _speedMultiplier = speedMultiplier;
+
+            // Decrease spawn times (faster spawning) as difficulty increases
+            _currentMinSpawnTime = _baseMinSpawnTime / spawnRateMultiplier;
+            _currentMaxSpawnTime = _baseMaxSpawnTime / spawnRateMultiplier;
+        }
+
         private float GetRandomSpawnTime()
         {
-            return (float)(_random.NextDouble() * (_maxSpawnTime - _minSpawnTime) + _minSpawnTime);
+            return (float)(_random.NextDouble() * (_currentMaxSpawnTime - _currentMinSpawnTime) + _currentMinSpawnTime);
         }
 
         private void SpawnRandomRock()
@@ -79,11 +93,14 @@ namespace Dredge_lung_test
             int xPos = _random.Next(100, Globals.ScreenWidth - 100);
             Vector2 position = new Vector2(xPos, Globals.ScreenHeight + 50); // Start below the screen
 
+            // Apply speed multiplier to the base speed
+            float adjustedSpeed = 150 * _speedMultiplier;
+
             // Create the rock with the determined parameters
             Rock rock = new Rock(
                 _rockTexture,
                 position,
-                150, // Base speed
+                adjustedSpeed, // Use adjusted speed
                 _rockRects[rockType],
                 _rockScales[rockType],
                 new Vector2(0, -1) // Moving upward
@@ -109,6 +126,8 @@ namespace Dredge_lung_test
             // Remove rocks that are out of bounds or inactive
             foreach (Rock rock in rocksToRemove)
             {
+                // Make sure rock is deactivated (which unregisters from CollisionManager)
+                rock.Deactivate();
                 _activeRocks.Remove(rock);
             }
         }
@@ -124,24 +143,7 @@ namespace Dredge_lung_test
                    rock.Position.Y > Globals.ScreenHeight + margin;
         }
 
-        public void CheckPlayerCollision(Player player)
-        {
-            foreach (Rock rock in _activeRocks)
-            {
-                if (rock.CheckCollision(player.Bounds))
-                {
-                    // Deactivate the rock
-                    rock.Deactivate();
-
-                    // Remove a life from the player
-                    _scoreManager.RemoveLife();
-
-                    // Could add effects or sounds here
-
-                    // No need to check other rocks once hit
-                    break;
-                }
-            }
-        }
+        // No longer needed as this is handled by CollisionManager
+        // public void CheckPlayerCollision(Player player) { ... }
     }
 }

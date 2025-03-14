@@ -5,16 +5,17 @@ using System;
 
 namespace Dredge_lung_test
 {
-    public class Player : Sprite
+    public class Player : Sprite, ICollidable, ILayerable
     {
+        private ScoreManager _scoreManager;
+
         public bool IsHarpoonFiring { get; set; }
 
         private Vector2 _velocity = Vector2.Zero;
         private Vector2 _acceleration = Vector2.Zero;
         private float _accelerationRate = 600;
         private float _frictionRate = 500;
-        private float _returnSpeed = 50; // How quickly to return to default Y\
-        private Rectangle _collision;
+        private float _returnSpeed = 50; // How quickly to return to default Y
         private bool _isReturning = false;
         private bool _isAtDefaultPosition = false;
         private float _spriteWidth;
@@ -22,10 +23,11 @@ namespace Dredge_lung_test
         private float _defaultY; // Store the default Y position
         public static bool ShowCollisionRects = true;
 
-        // Property to allow access to the Bounds
-        public new Rectangle Bounds { get; private set; }
+        // Property for ICollidable
+        public Rectangle Bounds { get; private set; }
+        public bool IsActive { get; private set; } = true;
 
-        public Player(Texture2D texture, Vector2 position) : base(texture, position)
+        public Player(Texture2D texture, Vector2 position, ScoreManager scoreManager) : base(texture, position)
         {
             Speed = 400;
             Scale = new Vector2(0.15f, 0.15f);
@@ -34,16 +36,24 @@ namespace Dredge_lung_test
             _defaultY = position.Y;
             _spriteWidth = Texture.Width * Scale.X;
             _spriteHeight = Texture.Height * Scale.Y;
+
+            ZIndex = 10; // Lower number = higher in the visual stack
+            UpdateLayerDepth();
+
+            // Register with collision manager
+            CollisionManager.Instance.Register(this);
+            _scoreManager = scoreManager;
         }
 
         public override void Update()
         {
-           Movement();
+            Movement();
             Bounds = new Rectangle((int)Position.X + 15, (int)Position.Y + 8, 175, 106);
         }
 
         private void Movement()
         {
+            // [Movement code remains unchanged, as it was not affected by collision system]
             Vector2 inputDirection = IM.Direction;
 
             // Check if harpoon is firing - if so, restrict movement
@@ -138,7 +148,6 @@ namespace Dredge_lung_test
                 _acceleration.X = 0;
             }
 
-
             // Handle vertical movement during return to default
             if (_isReturning)
             {
@@ -197,12 +206,22 @@ namespace Dredge_lung_test
 
         public override void Draw()
         {
-            Globals.SpriteBatch.Draw(Texture, Position, null, Color.White, 0, Vector2.Zero, Scale, SpriteEffects.None, 0.9f);
+            Globals.SpriteBatch.Draw(Texture, Position, null, Color.White, 0, Vector2.Zero, Scale, SpriteEffects.None, LayerDepth);
 
             if (ShowCollisionRects)
             {
                 Color debugColor = Color.Red;
-                DebugRenderer.DrawRectangle(Bounds, debugColor, 0.9f);
+                DebugRenderer.DrawRectangle(Bounds, debugColor, LayerDepth - 0.01f);
+            }
+        }
+
+        // Implement ICollidable.OnCollision
+        public void OnCollision(ICollidable other)
+        {
+            // We only care about collisions with rocks
+            if (other is Rock)
+            {
+                _scoreManager.RemoveLife();
             }
         }
     }

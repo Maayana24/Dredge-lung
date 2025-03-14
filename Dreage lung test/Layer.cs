@@ -3,9 +3,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Dredge_lung_test
 {
-    public class Layer
+    public class Layer : ILayerable
     {
         private readonly Texture2D Texture;
+        public float LayerDepth { get; set; } = 0.1f;
+        public int ZIndex { get; set; } = 0;
 
         private Vector2 Position;
         private Vector2 Position2;
@@ -37,6 +39,14 @@ namespace Dredge_lung_test
             {
                 Position2.Y = Position.Y + Texture.Height;
             }
+        }
+
+        public void UpdateLayerDepth()
+        {
+            // Layer depth is already set by the _depth parameter in constructor
+            // You might want to adjust based on ZIndex if needed
+            LayerDepth = _depth + (ZIndex / 100.0f);
+            LayerDepth = MathHelper.Clamp(LayerDepth, 0.0f, 1.0f);
         }
 
         public void Draw()

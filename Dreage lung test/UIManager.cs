@@ -17,6 +17,8 @@ namespace Dredge_lung_test
         public Text CooldownText { get; private set; }
         public Text GameOverText { get; private set; }
 
+        public Text HighScoreText { get; private set; }
+
         public UIManager(List<Fish> fishes)
         {
             _fishes = fishes;
@@ -26,6 +28,8 @@ namespace Dredge_lung_test
         {
             // Create score text in the top right
             ScoreText = AddText(new Vector2(850, 40), "Score: 0", Color.White, 1.5f);
+
+            HighScoreText = AddText(new Vector2(730, 80), "High Score: 0", Color.Gold, 1.5f);
 
             // Create lives text in the top left
             LivesText = AddText(new Vector2(10, 40), "Lives: 3", Color.White, 1.5f);
@@ -47,6 +51,12 @@ namespace Dredge_lung_test
         {
             ScoreText.SetText($"Score: {score}");
         }
+
+        public void UpdateHighScoreText(int highScore)
+        {
+            HighScoreText.SetText($"High Score: {highScore}");
+        }
+
 
         public void UpdateLivesText(int lives)
         {

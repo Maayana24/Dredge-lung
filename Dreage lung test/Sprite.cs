@@ -4,11 +4,12 @@ using System;
 
 namespace Dredge_lung_test
 {
-    public abstract class Sprite
+    public abstract class Sprite : ILayerable
     {
         public readonly Texture2D Texture;
         protected readonly Vector2 Origin;
 
+        public int ZIndex { get; set; } = 0;
         public Vector2 Position { get;  set; }
         public Vector2 Direction { get; set; } = new Vector2(1, 0);
         public float Speed { get; protected set; }
@@ -29,6 +30,14 @@ namespace Dredge_lung_test
             Bounds = new Rectangle(0, 0, texture.Width, texture.Height);
 
         }
+
+        public virtual void UpdateLayerDepth()
+        {
+            // Convert ZIndex to layer depth (0.0-1.0 range)
+            // Higher ZIndex = lower layer depth (closer to 1.0)
+            // Lower ZIndex = higher layer depth (closer to 0.0)
+            LayerDepth = MathHelper.Clamp(1.0f - (ZIndex / 100.0f), 0.0f, 1.0f);
+        }   
         public abstract void Update();
 
         public virtual void Draw()

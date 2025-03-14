@@ -6,27 +6,85 @@ namespace Dredge_lung_test
 {
     public class FishSpawner
     {
-        private readonly List<Fish> _activeFishes;
-        private readonly Random _random;
-        private float _spawnTimer;
-        private readonly float _minSpawnTime = 0.5f;
-        private readonly float _maxSpawnTime = 2.0f;
-        private float _nextSpawnTime;
+            private readonly List<Fish> _activeFishes;
+            private readonly Random _random;
+            private float _spawnTimer;
+            private float _baseMinSpawnTime = 0.5f;
+            private float _baseMaxSpawnTime = 2.0f;
+            private float _currentMinSpawnTime;
+            private float _currentMaxSpawnTime;
+            private float _nextSpawnTime;
+            private float _speedMultiplier = 1.0f;
 
-        private const int JellySpawnChance = 10; // Chance to spawn a Jelly
+            private const int JellySpawnChance = 10; // Chance to spawn a Jelly
 
-        public FishSpawner(List<Fish> fishes)
-        {
-            _activeFishes = fishes;
-            _random = new Random();
-            _spawnTimer = 0;
-            _nextSpawnTime = GetRandomSpawnTime();
+            public FishSpawner(List<Fish> fishes)
+            {
+                _activeFishes = fishes;
+                _random = new Random();
+                _spawnTimer = 0;
+                _currentMinSpawnTime = _baseMinSpawnTime;
+                _currentMaxSpawnTime = _baseMaxSpawnTime;
+                _nextSpawnTime = GetRandomSpawnTime();
 
-            // Ensure AnomalyManager is initialized
-            AnomalyManager.Instance.ToString();
-        }
+                // Ensure AnomalyManager is initialized
+                AnomalyManager.Instance.ToString();
+            }
 
-        public void Update()
+            // Method to handle difficulty changes
+            public void OnDifficultyChanged(int level, float speedMultiplier, float spawnRateMultiplier)
+            {
+                _speedMultiplier = speedMultiplier;
+
+                // Decrease spawn times (faster spawning) as difficulty increases
+                _currentMinSpawnTime = _baseMinSpawnTime / (spawnRateMultiplier / 2);
+                _currentMaxSpawnTime = _baseMaxSpawnTime / (spawnRateMultiplier / 2);
+            }
+
+            private float GetRandomSpawnTime()
+            {
+                return (float)(_random.NextDouble() * (_currentMaxSpawnTime - _currentMinSpawnTime) + _currentMinSpawnTime);
+            }
+
+            // Modify SpawnFish to use the speed multiplier
+            private void SpawnFish(int fishType, bool leftToRight)
+            {
+                // Set starting position based on direction (off-screen)
+                float xPos = leftToRight ? -100 : Globals.ScreenWidth + 100; // Off-screen position
+                float yPos = _random.Next(200, Globals.ScreenHeight - 200); // Random y position
+                Vector2 position = new Vector2(xPos, yPos);
+
+                (string fishName, Rectangle sourceRect, Vector2 scale, float baseSpeed) = GetFishAttributes(fishType);
+
+                // Apply speed multiplier to the base speed
+                float adjustedSpeed = baseSpeed * _speedMultiplier;
+
+                // Create the fish with the determined parameters
+                Fish fish = new Fish(fishName, position, adjustedSpeed, sourceRect, scale);
+
+                // Set direction based on spawn side
+                fish.Direction = leftToRight ? new Vector2(1, 0) : new Vector2(-1, 0);
+
+                _activeFishes.Add(fish);
+            }
+
+            // Similarly modify SpawnJelly to use the speed multiplier
+            private void SpawnJelly()
+            {
+                // Spawn at random x position at the bottom of the screen
+                int xPos = _random.Next(100, Globals.ScreenWidth - 100);
+                Vector2 position = new Vector2(xPos, Globals.ScreenHeight + 50); // Start below the screen
+
+                Rectangle sourceRect = new Rectangle(150, 210, 250, 300);
+
+                // Apply speed multiplier to the base speed
+                float adjustedSpeed = 120 * _speedMultiplier;
+
+                Fish jelly = new Fish("Jelly", position, adjustedSpeed, sourceRect, new Vector2(0.5f, 0.5f), new Vector2(0, -1));
+                _activeFishes.Add(jelly);
+            }
+
+            public void Update()
         {
             // Update spawn timer
             _spawnTimer += Globals.DeltaTime;
@@ -41,11 +99,6 @@ namespace Dredge_lung_test
 
             // Update and remove fish that are out of bounds
             UpdateActiveFishes();
-        }
-
-        private float GetRandomSpawnTime()
-        {
-            return (float)(_random.NextDouble() * (_maxSpawnTime - _minSpawnTime) + _minSpawnTime);
         }
 
         private void SpawnRandomFish()
@@ -63,37 +116,6 @@ namespace Dredge_lung_test
 
                 SpawnFish(fishType, leftToRight);
             }
-        }
-
-        private void SpawnJelly()
-        {
-            // Spawn at random x position at the bottom of the screen
-            int xPos = _random.Next(100, Globals.ScreenWidth - 100);
-            Vector2 position = new Vector2(xPos, Globals.ScreenHeight + 50); // Start below the screen
-
-            Rectangle sourceRect = new Rectangle(150, 210, 250, 300);
-
-            Fish jelly = new Fish("Jelly", position, 120, sourceRect, new Vector2(0.5f, 0.5f), new Vector2(0, -1));
-            _activeFishes.Add(jelly);
-        }
-
-        private void SpawnFish(int fishType, bool leftToRight)
-        {
-            // Set starting position based on direction (off-screen)
-            float xPos = leftToRight ? -100 : Globals.ScreenWidth + 100; // Off-screen position
-            float yPos = _random.Next(200, Globals.ScreenHeight - 200); // Random y position
-            Vector2 position = new Vector2(xPos, yPos);
-
-            (string fishName, Rectangle sourceRect, Vector2 scale, float speed) = GetFishAttributes(fishType);
-
-
-            // Create the fish with the determined parameters
-            Fish fish = new Fish(fishName, position, speed, sourceRect, scale);
-
-            // Set direction based on spawn side
-            fish.Direction = leftToRight ? new Vector2(1, 0) : new Vector2(-1, 0);
-
-            _activeFishes.Add(fish);
         }
 
         private (string fishName, Rectangle sourceRect, Vector2 scale, float speed) GetFishAttributes(int fishType)
