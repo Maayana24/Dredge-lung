@@ -10,8 +10,10 @@ namespace Dredge_lung_test
         private readonly BGM _bgm = new();
         private readonly Player _player;
         private List<Fish> _fishes;
+        private List<Rock> _rocks; // Added rocks list
         private readonly UIManager _ui;
         private readonly FishSpawner _fishSpawner;
+        private readonly RockSpawner _rockSpawner; // Added rock spawner
         private ScoreManager _scoreManager;
         private readonly Harpoon _harpoon;
 
@@ -20,8 +22,9 @@ namespace Dredge_lung_test
 
         public GameManager()
         {
-            // Initialize fish list
+            // Initialize fish and rock lists
             _fishes = new List<Fish>();
+            _rocks = new List<Rock>(); // Initialize rocks list
 
             _ui = new UIManager(_fishes);
 
@@ -52,6 +55,13 @@ namespace Dredge_lung_test
 
             // Create fish spawner with screen dimensions
             _fishSpawner = new FishSpawner(_fishes);
+
+            // Create rock spawner
+            _rockSpawner = new RockSpawner(
+                _rocks,
+                Globals.Content.Load<Texture2D>("Obstacles/Rocks"), // Load rock texture
+                _scoreManager
+            );
 
             // Initial UI update
             _ui.UpdateScoreText(_scoreManager.Score);
@@ -86,16 +96,35 @@ namespace Dredge_lung_test
             // Update fish spawner
             _fishSpawner.Update();
 
+            // Update rock spawner
+            _rockSpawner.Update();
+
+            // Check if player collides with any rocks
+            _rockSpawner.CheckPlayerCollision(_player);
+
             // Update all active fish
             foreach (Fish fish in new List<Fish>(_fishes)) // Create a copy to avoid collection modified exception
             {
                 fish.Update();
+            }
+
+            // Update all active rocks
+            foreach (Rock rock in new List<Rock>(_rocks)) // Create a copy to avoid collection modified exception
+            {
+                rock.Update();
             }
         }
 
         public void Draw()
         {
             _bgm.Draw();
+
+            // Draw all active rocks
+            foreach (Rock rock in _rocks)
+            {
+                rock.Draw();
+            }
+
             _player.Draw();
             _harpoon.Draw();
 
@@ -118,6 +147,7 @@ namespace Dredge_lung_test
         public void Reset()
         {
             _fishes.Clear();
+            _rocks.Clear(); // Clear rocks too
             _scoreManager.Reset();
             _isGameOver = false;
             _ui.ShowGameOver(false);

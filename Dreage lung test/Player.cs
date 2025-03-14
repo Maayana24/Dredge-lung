@@ -36,7 +36,7 @@ namespace Dredge_lung_test
             _spriteHeight = Texture.Height * Scale.Y;
         }
 
-        public void Update()
+        public override void Update()
         {
            Movement();
             Bounds = new Rectangle((int)Position.X + 15, (int)Position.Y + 8, 175, 106);

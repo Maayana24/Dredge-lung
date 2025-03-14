@@ -9,7 +9,7 @@ namespace Dredge_lung_test
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        private GameManager _gm;
+        private GameManager _gm; //Initialize the game manager
 
         public Game1()
         {

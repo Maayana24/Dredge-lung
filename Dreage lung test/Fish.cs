@@ -35,7 +35,7 @@ namespace Dredge_lung_test
             Anomalies = AnomalyManager.Instance.GenerateAnomaliesForFish(this);
         }
 
-        public virtual void Update()
+        public override void Update()
         {
             Movement();
             // Flip the sprite based on direction

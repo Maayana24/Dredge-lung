@@ -29,6 +29,7 @@ namespace Dredge_lung_test
             Bounds = new Rectangle(0, 0, texture.Width, texture.Height);
 
         }
+        public abstract void Update();
 
         public virtual void Draw()
         {
