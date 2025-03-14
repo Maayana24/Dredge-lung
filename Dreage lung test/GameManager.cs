@@ -12,11 +12,7 @@ namespace Dredge_lung_test
         private List<Fish> _fishes;
         private readonly UIManager _ui;
         private readonly FishSpawner _fishSpawner;
-        private Text _scoreText;
-        private Text _livesText;
-        private Text _cooldownText;
         private ScoreManager _scoreManager;
-
         private readonly Harpoon _harpoon;
 
         // Game state
@@ -28,22 +24,17 @@ namespace Dredge_lung_test
             _fishes = new List<Fish>();
 
             _ui = new UIManager(_fishes);
-            _ui.SetUpUI();
 
             // Initialize score manager
             _scoreManager = new ScoreManager(3); // Start with 3 lives
             _scoreManager.GameOver += OnGameOver;
 
-            _scoreManager.ScoreChanged += UpdateScoreText;
-            _scoreManager.LivesChanged += UpdateLivesText;
+            // Set up UI after score manager is initialized
+            _ui.SetUpUI();
 
-
-            // Create UI text elements for score and lives
-            _scoreText = _ui.AddText(new Vector2(900, 40), "Score: 0", Color.White);
-            _livesText = _ui.AddText(new Vector2(10, 40), "Lives: 3", Color.White);
-            _cooldownText = _ui.AddText(new Vector2(Globals.ScreenWidth / 2 - 100, 40), "", Color.Yellow);
-            _cooldownText.IsVisible = false;
-
+            // Connect score manager events to UI updates
+            _scoreManager.ScoreChanged += (sender, e) => _ui.UpdateScoreText(_scoreManager.Score);
+            _scoreManager.LivesChanged += (sender, e) => _ui.UpdateLivesText(_scoreManager.Lives);
 
             //Background layers
             _bgm.AddLayer(new Layer(LoadAndRotateTexture("1"), 0.0f, 0.0f));
@@ -61,6 +52,10 @@ namespace Dredge_lung_test
 
             // Create fish spawner with screen dimensions
             _fishSpawner = new FishSpawner(_fishes);
+
+            // Initial UI update
+            _ui.UpdateScoreText(_scoreManager.Score);
+            _ui.UpdateLivesText(_scoreManager.Lives);
         }
 
         public void Update()
@@ -77,6 +72,17 @@ namespace Dredge_lung_test
             // Update harpoon
             _harpoon.Update();
 
+            // Update cooldown text in UI
+            if (_harpoon.IsInCooldown)
+            {
+                float remainingTime = _harpoon.CooldownDuration - _harpoon.CooldownTimer;
+                _ui.UpdateCooldownText(true, (int)remainingTime);
+            }
+            else
+            {
+                _ui.UpdateCooldownText(false, 0);
+            }
+
             // Update fish spawner
             _fishSpawner.Update();
 
@@ -90,7 +96,6 @@ namespace Dredge_lung_test
         public void Draw()
         {
             _bgm.Draw();
-            _ui.Draw();
             _player.Draw();
             _harpoon.Draw();
 
@@ -100,40 +105,14 @@ namespace Dredge_lung_test
                 fish.Draw();
             }
 
-
-            // Draw score
-            string scoreText = $"Score: {_scoreManager.Score}";
-            Vector2 scorePos = new Vector2(10, 10);
-            Globals.SpriteBatch.DrawString(Globals.Font, scoreText, scorePos, Color.White);
-
-            // Draw lives
-            string livesText = $"Lives: {_scoreManager.Lives}";
-            Vector2 livesPos = new Vector2(10, 40);
-            Globals.SpriteBatch.DrawString(Globals.Font, livesText, livesPos, Color.White);
-
-            // Draw game over message if applicable
-            if (_isGameOver)
-            {
-                string gameOverText = "GAME OVER";
-                Vector2 textSize = Globals.Font.MeasureString(gameOverText);
-                Vector2 gameOverPos = new Vector2((Globals.ScreenWidth - textSize.X) / 2, (Globals.ScreenHeight - textSize.Y) / 2);
-                Globals.SpriteBatch.DrawString(Globals.Font, gameOverText, gameOverPos, Color.Red);
-            }
-        }
-
-        private void UpdateScoreText(object sender, EventArgs e)
-        {
-            _scoreText.SetText($"Score: {_scoreManager.Score}");
-        }
-
-        private void UpdateLivesText(object sender, EventArgs e)
-        {
-            _livesText.SetText($"Lives: {_scoreManager.Lives}");
+            // Draw UI elements (includes all text)
+            _ui.Draw();
         }
 
         private void OnGameOver(object sender, EventArgs e)
         {
             _isGameOver = true;
+            _ui.ShowGameOver(true);
         }
 
         public void Reset()
@@ -141,6 +120,9 @@ namespace Dredge_lung_test
             _fishes.Clear();
             _scoreManager.Reset();
             _isGameOver = false;
+            _ui.ShowGameOver(false);
+            _ui.UpdateScoreText(_scoreManager.Score);
+            _ui.UpdateLivesText(_scoreManager.Lives);
         }
 
         private Texture2D LoadAndRotateTexture(string assetName) //maybe theres a simpler way?
