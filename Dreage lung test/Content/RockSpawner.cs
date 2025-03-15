@@ -22,19 +22,19 @@ namespace Dredge_lung_test
         // Rock attributes - manually defined rectangles for each rock type
         private readonly Rectangle[] _rockRects = new Rectangle[]
         {
-            new Rectangle(50, 50, 200, 200),    // Rock type 0 - Update these values
-            new Rectangle(50, 50, 200, 200),    // Rock type 1 - with your actual 
-            new Rectangle(50, 50, 200, 200),    // Rock type 2 - sprite sheet
-            new Rectangle(50, 50, 200, 200),    // Rock type 3 - coordinates and
-            new Rectangle(50, 50, 200, 200),    // Rock type 4 - dimensions
-            new Rectangle(50, 50, 200, 200)     // Rock type 5
+            new Rectangle(1225, 160, 400, 115),    // Rock type 0 - Update these values
+            new Rectangle(1225, 535, 400, 140),    // Rock type 1 - with your actual 
+            new Rectangle(765, 628, 240, 117),    // Rock type 2 - sprite sheet
+            new Rectangle(670, 905, 480, 145),    // Rock type 3 - coordinates and
+            new Rectangle(1320, 895, 300, 120),    // Rock type 4 - dimensions
+            new Rectangle(1150, 1320, 600, 200)     // Rock type 5
         };
 
         // Scale variations for different rock types
         private readonly Vector2[] _rockScales = new Vector2[]
         {
-            new Vector2(0.5f, 0.5f),  // Rock type 0
-            new Vector2(0.5f, 0.5f),  // Rock type 1
+            new Vector2(0.6f, 0.6f),  // Rock type 0
+            new Vector2(0.57f, 0.57f),  // Rock type 1
             new Vector2(0.5f, 0.5f),  // Rock type 2
             new Vector2(0.5f, 0.5f),  // Rock type 3
             new Vector2(0.5f, 0.5f),  // Rock type 4

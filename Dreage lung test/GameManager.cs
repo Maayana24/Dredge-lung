@@ -97,7 +97,7 @@ namespace Dredge_lung_test
             _difficultyManager.DifficultyChanged += _rockSpawner.OnDifficultyChanged;
             _difficultyManager.DifficultyChanged += OnDifficultyChanged;
 
-            _uiManager.ReplayClicked += (sender, e) => Reset();
+           // _uiManager.ReplayClicked += (sender, e) => Reset();
         }
 
         private void RegisterUpdatables() //Adding updatable class to updatable list
