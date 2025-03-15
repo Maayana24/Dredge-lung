@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Dredge_lung_test
 {
+
+    //READ ONLY AND ENCAPSULATION
     public class Game1 : Game
     {
         private GraphicsDeviceManager _graphics;
@@ -25,13 +27,13 @@ namespace Dredge_lung_test
             _graphics.PreferredBackBufferHeight = 1080;
             _graphics.ApplyChanges();
 
+            //Initialize the Globals attributes 
             Globals.GraphicsDevice = GraphicsDevice;
             Globals.ScreenWidth = 1920;
             Globals.ScreenHeight = 1080;
             Globals.Content = Content;
 
-            // Initialize the playable area with your background dimensions
-            PlayableArea.Initialize(1080, 1920);
+            PlayableArea.Initialize(1080, 1920); //Initialize the playable area the size of the background
 
             base.Initialize();
         }
@@ -43,8 +45,8 @@ namespace Dredge_lung_test
             Globals.SpriteBatch = _spriteBatch;
 
             // TODO: use this.Content to load your game content here
-            _gm = new();
-            DebugRenderer.Initialize(GraphicsDevice);
+            _gm = new(); //Loading my game manager
+            DebugRenderer.Initialize(GraphicsDevice); //Loading my debug class
         }
 
         protected override void Update(GameTime gameTime)
@@ -53,6 +55,8 @@ namespace Dredge_lung_test
                 Exit();
 
             // TODO: Add your update logic here
+
+            //Updating only Globals and the game manager. the rest is in the game manager
             Globals.Update(gameTime);
             _gm.Update();
 

@@ -1,43 +1,39 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using System.Diagnostics;
 namespace Dredge_lung_test
 {
     public class Fish : Sprite, ICollidable, ILayerable
     {
-        private readonly float FishLayer = 0.8f;
-        public Rectangle SourceRect { get; private set; }
+        public Rectangle SourceRect { get; private set; } //WHATS THE DIFFIRENCE
         private Rectangle CollisionRect { get; set; }
-        public string Name { get; private set; }
+        public string Name { get; private set; } //So I could easily differentiate the fish 
         public List<Anomaly> Anomalies { get; private set; }
-        public static bool ShowCollisionRects = true;
         public bool IsActive { get; private set; } = true;
+        public bool HasAnomalies => Anomalies.Count > 0; //To check if the fish has anomalies
 
-        // Property to check if the fish has any anomalies
-        public bool HasAnomalies => Anomalies.Count > 0;
+        public static bool ShowCollisionRects = true; //Debug
+
 
         public Fish(string name, Vector2 position, float speed = 150, Rectangle sourceRect = default, Vector2? scale = null, Vector2? direction = null)
-            : base(Globals.Content.Load<Texture2D>("Fish/FishTemplate"), position)
+        : base(Globals.Content.Load<Texture2D>("Fish/FishTemplate"), position) //All fish textures are in one sprite sheet
         {
             Name = name;
             Speed = speed;
-            Direction = direction ?? Direction;
-            // Ensure valid source rectangle
-            SourceRect = sourceRect.Width > 0 && sourceRect.Height > 0 ?
-                sourceRect : new Rectangle(0, 0, 100, 100);
-            Scale = scale ?? Scale;
-            // Generate anomalies for this fish
-            Anomalies = AnomalyManager.Instance.GenerateAnomaliesForFish(this);
+            Direction = direction ?? Direction; //Not all fish needs a special direction
+            SourceRect = sourceRect.Width > 0 && sourceRect.Height > 0 ? sourceRect : new Rectangle(0, 0, 100, 100); //Validity check for source rectangle
+            Scale = scale ?? Scale; //If fish needs to change scale
 
-            ZIndex = 30; // This is fine
+            Anomalies = AnomalyManager.Instance.GenerateAnomaliesForFish(this); //Generating the anomalies
+
+            ZIndex = 30;
             LayerDepth = 0.8f;
             UpdateLayerDepth();
 
-            // Initial collision rect setup
+            // Initial collision rect setup????
             UpdateCollisionRect();
 
-            // Register with collision manager
+            // Register with collision manager????
             CollisionManager.Instance.Register(this);
         }
 
@@ -46,8 +42,7 @@ namespace Dredge_lung_test
             if (!IsActive) return;
 
             Movement();
-            // Flip the sprite based on direction
-            SpriteEffect = Direction.X > 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            SpriteEffect = Direction.X > 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None; //Flipping fish sprite based on direction
             UpdateCollisionRect();
         }
 
@@ -55,10 +50,9 @@ namespace Dredge_lung_test
         {
             base.UpdateLayerDepth();
 
-            // Update anomalies layer depth to be slightly above the fish
+            //Updating anomalies layer to be slightly above the fish layer
             foreach (var anomaly in Anomalies)
             {
-                // This assumes Anomaly implements ILayerable or has a LayerDepth property
                 anomaly.LayerDepth = LayerDepth + 0.01f;
             }
         }
@@ -72,16 +66,11 @@ namespace Dredge_lung_test
         {
             int width = (int)(SourceRect.Width * Scale.X);
             int height = (int)(SourceRect.Height * Scale.Y);
-            CollisionRect = new Rectangle(
-                (int)(Position.X - width / 2),
-                (int)(Position.Y - height / 2),
-                width,
-                height
-            );
+            CollisionRect = new Rectangle((int)(Position.X - width / 2), (int)(Position.Y - height / 2), width, height); //COLLISION SOURCERECT AND BOUNDS????
             Bounds = CollisionRect;
         }
 
-        public Rectangle GetSourceRect()
+        public Rectangle GetSourceRect() //????
         {
             return SourceRect;
         }
@@ -90,23 +79,12 @@ namespace Dredge_lung_test
         {
             if (!IsActive) return;
 
-            // Draw the base fish - use the LayerDepth property instead of FishLayer constant
-            Globals.SpriteBatch.Draw(
-                Texture,
-                Position,
-                SourceRect,
-                Color.White,
-                0,
-                new Vector2(SourceRect.Width / 2, SourceRect.Height / 2),
-                Scale,
-                SpriteEffect,
-                LayerDepth // Use the property instead of the constant
-            );
+            //Drawing the fish
+            Globals.SpriteBatch.Draw(Texture, Position, SourceRect, Color.White, 0, new Vector2(SourceRect.Width / 2, SourceRect.Height / 2), Scale, SpriteEffect, LayerDepth);
 
-            // Draw anomalies on top of the fish
+            //Drawing anomalies on top of the fish
             foreach (var anomaly in Anomalies)
             {
-                // The anomaly's LayerDepth property is already set in UpdateLayerDepth()
                 anomaly.Draw(Position, Scale, SpriteEffect, anomaly.LayerDepth);
             }
 

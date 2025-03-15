@@ -1,71 +1,80 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
-using System.Reflection.Metadata;
 
 namespace Dredge_lung_test
 {
     public class GameManager
     {
-        private readonly Player _player;
+        //ORDER
         private List<Fish> _fishes;
         private List<Rock> _rocks;
-        private readonly UIManager _ui;
+
+        private readonly List<IUpdatable> _updatables;
+        private readonly List<IDrawable> _drawables;
+
+        private readonly Player _player;
+        private readonly Harpoon _harpoon;
+
+        private readonly UIManager _uiManager;
+        private readonly ScoreManager _scoreManager;
+        private readonly DifficultyManager _difficultyManager;
+        private readonly BGM _bgm; //CHANGE NAME
+
         private readonly FishSpawner _fishSpawner;
         private readonly RockSpawner _rockSpawner;
-        private ScoreManager _scoreManager;
-        private readonly Harpoon _harpoon;
-        private DifficultyManager _difficultyManager;
-        private readonly BGM _bgm;
-        private List<IUpdatable> _updatables = new List<IUpdatable>();
-        private List<IDrawable> _drawables = new List<IDrawable>();
+
         private Song song;
 
-
-        // Game state
+        //the game state
         private bool _isGameOver = false;
 
         public GameManager()
         {
-            // Load global resources
-            Globals.Font = Globals.Content.Load<SpriteFont>("Fonts/Defult");
-            song = Globals.Content.Load<Song>("Audio/Drowned");
+            //Load the global resources
+            Globals.Font = Globals.Content.Load<SpriteFont>("Fonts/Defult"); //SPELLING
+            song = Globals.Content.Load<Song>("Audio/Drowned"); //MOVE TO GLOBALS
 
-            MediaPlayer.Play(song);
+            MediaPlayer.Play(song); //WIP
             MediaPlayer.IsRepeating = true;
-            // Initialize collections
+
+            //Initializing the lists
             _fishes = new List<Fish>();
             _rocks = new List<Rock>();
             _updatables = new List<IUpdatable>();
+            _drawables = new List<IDrawable>();
 
-            // Initialize managers
-            _scoreManager = new ScoreManager(1); // Start with 3 lives
-            _scoreManager.GameOver += OnGameOver;
+            //Initializing the managers
+            _scoreManager = new ScoreManager(3); //passing number of lives for the player
             _difficultyManager = new DifficultyManager();
 
-            // Initialize UI
-            _ui = new UIManager(_fishes);
-            _ui.SetUpUI();
+            _scoreManager.GameOver += OnGameOver; //WIP
 
-            // Initialize background
+            //Initializing the UI
+            _uiManager = new UIManager(_fishes);
+            _uiManager.SetUpUI();
+
+            //Initializing the background
             _bgm = BGM.Instance;
             _bgm.InitializeBackground();
-            _bgm.ZIndex = 0;
+            _bgm.ZIndex = 0; //Should be last layer
 
-            // Initialize game objects
+            //Initializing game objects
             _player = new Player(Globals.Content.Load<Texture2D>("Fish/Submarine"), new Vector2(300, 300), _scoreManager);
             _harpoon = new Harpoon(_player, _fishes, _scoreManager);
             _fishSpawner = new FishSpawner(_fishes);
+            //WHY ROCK DIFFIRENT
             _rockSpawner = new RockSpawner(
                 _rocks,
                 Globals.Content.Load<Texture2D>("Rocks"),
                 _scoreManager
             );
 
-            // Connect event handlers
+            //WIP FROM DOWN HERE
+
+            //Connect event handlers
             ConnectEventHandlers();
 
             // Register updatable components
@@ -79,23 +88,22 @@ namespace Dredge_lung_test
         private void ConnectEventHandlers()
         {
             // Score and lives events
-            _scoreManager.ScoreChanged += (sender, e) => _ui.UpdateScoreText(_scoreManager.Score);
-            _scoreManager.LivesChanged += (sender, e) => _ui.UpdateLivesText(_scoreManager.Lives);
-            // Add high score event handler
-            _scoreManager.HighScoreChanged += (sender, e) => _ui.UpdateHighScoreText(_scoreManager.HighScore);
+            _scoreManager.ScoreChanged += (sender, e) => _uiManager.UpdateScoreText(_scoreManager.Score);
+            _scoreManager.LivesChanged += (sender, e) => _uiManager.UpdateLivesText(_scoreManager.Lives);
+            _scoreManager.HighScoreChanged += (sender, e) => _uiManager.UpdateHighScoreText(_scoreManager.HighScore);
 
             // Difficulty events
             _difficultyManager.DifficultyChanged += _fishSpawner.OnDifficultyChanged;
             _difficultyManager.DifficultyChanged += _rockSpawner.OnDifficultyChanged;
             _difficultyManager.DifficultyChanged += OnDifficultyChanged;
 
-            _ui.ReplayClicked += (sender, e) => Reset();
+            _uiManager.ReplayClicked += (sender, e) => Reset();
         }
 
-        private void RegisterUpdatables()
+        private void RegisterUpdatables() //Adding updatable class to updatable list
         {
             _updatables.Add(_player);
-            _updatables.Add(_ui);
+            _updatables.Add(_uiManager);
             _updatables.Add(_fishSpawner);
             _updatables.Add(_rockSpawner);
             _updatables.Add(_difficultyManager);
@@ -104,6 +112,7 @@ namespace Dredge_lung_test
         }
         private void RegisterDrawables()
         {
+            //Adding in order of what gets drawn first to last
             // Register background first (drawn first)
             _drawables.Add(_bgm);
 
@@ -117,41 +126,39 @@ namespace Dredge_lung_test
             // Don't add individual fish here, they will be drawn directly from the list
 
             // Register UI last (drawn on top)
-            _drawables.Add(_ui);
+            _drawables.Add(_uiManager);
         }
 
-        private void UpdateInitialUI()
+        //CHANGE FROM UI TO TEXT
+        private void UpdateInitialUI() //Initializing UI texts
         {
-            _ui.UpdateScoreText(_scoreManager.Score);
-            _ui.UpdateLivesText(_scoreManager.Lives);
-            // Add high score update
-            _ui.UpdateHighScoreText(_scoreManager.HighScore);
+            _uiManager.UpdateScoreText(_scoreManager.Score);
+            _uiManager.UpdateLivesText(_scoreManager.Lives);
+            _uiManager.UpdateHighScoreText(_scoreManager.HighScore);
         }
 
         public void Update()
         {
-            // Don't update if game is over
+            //Stop updating when the game is over
             if (_isGameOver)
                 return;
 
-            // Update input and UI
-            IM.Update();
+            IM.Update(); //Updating the input
+
+            //Updating classes in updatable list
             foreach (var updatable in _updatables)
             {
                 updatable.Update();
             }
 
-            // Update collision manager
+            //Updating the collision manager
             CollisionManager.Instance.CheckCollisions();
 
             // Update cooldown text in UI
-            UpdateHarpoonCooldownUI();
+            UpdateHarpoonCooldownUI(); //WIP
 
-            // Update all active fish
-            UpdateEntities(_fishes);
-
-            // Update all active rocks
-            UpdateEntities(_rocks);
+            UpdateEntities(_fishes); //Updating active fish
+            UpdateEntities(_rocks); //Updating active rocks
         }
 
         private void UpdateHarpoonCooldownUI()
@@ -159,17 +166,17 @@ namespace Dredge_lung_test
             if (_harpoon.IsInCooldown)
             {
                 float remainingTime = _harpoon.CooldownDuration - _harpoon.CooldownTimer;
-                _ui.UpdateCooldownText(true, (int)remainingTime);
+                _uiManager.UpdateCooldownText(true, (int)remainingTime);
             }
             else
             {
-                _ui.UpdateCooldownText(false, 0);
+                _uiManager.UpdateCooldownText(false, 0);
             }
         }
 
-        private void UpdateEntities<T>(List<T> entities) where T : class
+        private void UpdateEntities<T>(List<T> entities) where T : class //for updating spawnble game objects
         {
-            foreach (var entity in new List<T>(entities)) // Create a copy to avoid collection modified exception
+            foreach (var entity in new List<T>(entities)) // Create a copy to avoid collection modified exception???
             {
                 if (entity is IUpdatable updatable)
                 {
@@ -178,7 +185,7 @@ namespace Dredge_lung_test
             }
         }
 
-        private void OnDifficultyChanged(int level, float speedMultiplier, float spawnRateMultiplier)
+        private void OnDifficultyChanged(int level, float speedMultiplier, float spawnRateMultiplier) //MOVE WITH FRIENDS
         {
             // Update BGM speed to match the difficulty level
             _bgm.SetSpeedMultiplier(speedMultiplier);
@@ -186,7 +193,7 @@ namespace Dredge_lung_test
 
         public void Draw()
         {
-            // Draw all registered drawables in order of their registration
+            //Drawing registered drawables in the order they were added
             foreach (var drawable in _drawables)
             {
                 drawable.Draw();
@@ -196,16 +203,16 @@ namespace Dredge_lung_test
             // but before most game elements
             BGM.Instance.DrawBorderMasks();
 
-            // Draw debug visualization
-            DebugRenderer.DrawRectangle(PlayableArea.Bounds, Color.Yellow * 0.5f, 0.9f);
+            DebugRenderer.DrawRectangle(PlayableArea.Bounds, Color.Yellow * 0.5f, 0.9f); //Drawing debug
 
-            // Draw all active rocks
+
+            //Drawing active rocks
             foreach (Rock rock in _rocks)
             {
                 rock.Draw();
             }
 
-            // Draw all active fish
+            //Drawing active fish
             foreach (Fish fish in _fishes)
             {
                 fish.Draw();
@@ -215,7 +222,7 @@ namespace Dredge_lung_test
         private void OnGameOver(object sender, EventArgs e)
         {
             _isGameOver = true;
-            _ui.ShowGameOver(true);
+            _uiManager.ShowGameOver(true);
         }
 
         public void Reset()
@@ -236,9 +243,9 @@ namespace Dredge_lung_test
             _isGameOver = false;
 
             // Update UI
-            _ui.ShowGameOver(false);
-            _ui.UpdateScoreText(_scoreManager.Score);
-            _ui.UpdateLivesText(_scoreManager.Lives);
+            _uiManager.ShowGameOver(false);
+            _uiManager.UpdateScoreText(_scoreManager.Score);
+            _uiManager.UpdateLivesText(_scoreManager.Lives);
             // High score doesn't need to be updated here as Reset() doesn't affect the high score
         }
     }

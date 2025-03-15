@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace Dredge_lung_test;
 
-public static class Globals
+public static class Globals //Global attributes I want access from everywhere
 {
     public static ContentManager Content { get; set; }
     public static SpriteBatch SpriteBatch { get; set; }
@@ -17,7 +17,7 @@ public static class Globals
     public static int ScreenHeight { get; set; }
 
 
-    public static Vector2 Position(int x, int y)
+    public static Vector2 Position(int x, int y) //WIP
         { return new Vector2(x, y); }
 
 
