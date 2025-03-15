@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Dredge_lung_test
 {
-    public class Layer : ILayerable
+    public class Layer : ILayerable, IDrawable
     {
         private readonly Texture2D Texture;
         public float LayerDepth { get; set; } = 0.1f;
@@ -22,8 +22,8 @@ namespace Dredge_lung_test
             Texture = texture;
             _depth = depth;
             _moveScale = moveScale;
-            Position = Vector2.Zero;
-            Position2 = Vector2.Zero;
+            Position = new Vector2(PlayableArea.X, PlayableArea.Y + Position2.Y);
+            Position2 = new Vector2(PlayableArea.X, PlayableArea.Y + Position2.Y);
         }
 
         public void Update(float movement)
@@ -41,13 +41,13 @@ namespace Dredge_lung_test
             }
         }
 
-        public void UpdateLayerDepth()
-        {
-            // Layer depth is already set by the _depth parameter in constructor
-            // You might want to adjust based on ZIndex if needed
-            LayerDepth = _depth + (ZIndex / 100.0f);
-            LayerDepth = MathHelper.Clamp(LayerDepth, 0.0f, 1.0f);
-        }
+       public void UpdateLayerDepth()
+{
+    // Layer depth is already set by the _depth parameter in constructor
+    // You might want to adjust based on ZIndex if needed
+    LayerDepth = _depth + (ZIndex / 100.0f);
+    LayerDepth = MathHelper.Clamp(LayerDepth, 0.0f, 1.0f);
+}
 
         public void Draw()
         {

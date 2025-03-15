@@ -49,6 +49,7 @@ namespace Dredge_lung_test
         {
             Movement();
             Bounds = new Rectangle((int)Position.X + 15, (int)Position.Y + 8, 175, 106);
+            Position = new Vector2(MathHelper.Clamp(Position.X, PlayableArea.X, PlayableArea.X + PlayableArea.Width - _spriteWidth), MathHelper.Clamp(Position.Y, PlayableArea.Y, PlayableArea.Y + PlayableArea.Height - _spriteHeight));
         }
 
         private void Movement()

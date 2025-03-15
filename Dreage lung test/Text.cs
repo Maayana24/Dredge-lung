@@ -25,6 +25,11 @@ namespace Dredge_lung_test
             _text = text;
         }
 
+        public string GetText()
+        {
+            return _text;
+        }
+
         public override void Draw()
         {
             if (IsVisible)

@@ -1,98 +1,120 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Dredge_lung_test;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 using System;
+using System.Diagnostics;
 
-namespace Dredge_lung_test
+public class Button : UIElement, IClickable
 {
-    public class Button : UIElement, IClickable
+    private Action _onClick;
+    private Color _color;
+    private Texture2D _texture;
+    public Text _buttonText;
+    private float _scale;
+
+    public Button(Vector2 position, Texture2D texture, Color color, Action onClick, float scale = 1.0f) : base(texture, position)
     {
-        private Color _shade = Color.White;
-        private Color _defaultShade = Color.White;
-        private Rectangle _bounds;
-        private readonly Action _onClick;
+        _onClick = onClick;
+        _color = color;
+        _texture = texture;
+        _scale = scale;
+    }
 
-        public Button(Vector2 position, Texture2D texture, Color color, Action onClick) : base(texture, position)
+    public void SetText(string text, Color textColor, float scale = 1.0f)
+    {
+        if (Globals.Font == null)
+            return;
+
+        if (_buttonText == null)
         {
-            _onClick = onClick;
-            _defaultShade = color;
-            _shade = color;
-            UpdateBounds();
+            _buttonText = new Text(Globals.Font, text, Vector2.Zero, textColor, scale);
+            _buttonText.IsVisible = true;
+        }
+        else
+        {
+            _buttonText.SetText(text);
+           // _buttonText.Color = textColor;
+            _buttonText.Scale = new Vector2(scale, scale);
         }
 
-        private void UpdateBounds()
+        CenterText();
+    }
+
+    private void CenterText()
+    {
+        if (_buttonText != null && _texture != null)
         {
-            // Create bounds centered on the position
-            _bounds = new Rectangle(
-                (int)(Position.X - Texture.Width / 2),
-                (int)(Position.Y - Texture.Height / 2),
-                Texture.Width,
-                Texture.Height);
-        }
+            Vector2 textSize = Globals.Font.MeasureString(_buttonText.GetText()) * _buttonText.Scale.X;
 
-        public override void Update()
-        {
-            // Update bounds if position changed
-            UpdateBounds();
+            // Calculate the center position of the button
+            float buttonCenterX = Position.X + (_texture.Width * _scale / 2);
+            float buttonCenterY = Position.Y + (_texture.Height * _scale / 2);
 
-            if (IsMouseOver(IM.Cursor))
-            {
-                // Slightly darken the color when hovering
-                _shade = new Color(
-                    (int)(_defaultShade.R * 0.8f),
-                    (int)(_defaultShade.G * 0.8f),
-                    (int)(_defaultShade.B * 0.8f),
-                    _defaultShade.A);
-
-                // Debug info
-                System.Diagnostics.Debug.WriteLine($"Mouse over button at {Position}");
-            }
-            else
-            {
-                _shade = _defaultShade;
-            }
-        }
-
-        public override void Draw()
-        {
-            // Draw using the center of the texture as the origin
-            Globals.SpriteBatch.Draw(
-                Texture,
-                Position,
-                null,
-                _shade,
-                0f,
-                new Vector2(Texture.Width / 2, Texture.Height / 2),
-                Scale,
-                SpriteEffects.None,
-                0.95f);  // Use a high layer depth to ensure buttons are on top
-
-            // Debug draw of button bounds
-            /*
-            var boundsTexture = new Texture2D(Globals.GraphicsDevice, 1, 1);
-            boundsTexture.SetData(new[] { Color.White });
-            Globals.SpriteBatch.Draw(
-                boundsTexture,
-                _bounds,
-                null,
-                Color.Red * 0.3f,
-                0f,
-                Vector2.Zero,
-                SpriteEffects.None,
-                0.96f
+            // Position the text so its center aligns with the button's center
+            Vector2 centeredPosition = new Vector2(
+                buttonCenterX - (textSize.X / 2),
+                buttonCenterY - (textSize.Y / 2)
             );
-            */
+
+            _buttonText.Position = centeredPosition;
+
+            // Debug output to see text positioning
+            Debug.WriteLine($"Button Position: {Position}, Size: {_texture.Width * _scale}x{_texture.Height * _scale}");
+            Debug.WriteLine($"Text Size: {textSize.X}x{textSize.Y}, Centered Position: {centeredPosition}");
+        }
+    }
+
+    public bool IsMouseOver()
+    {
+        Rectangle buttonRect = new Rectangle(
+            (int)Position.X,
+            (int)Position.Y,
+            (int)(_texture.Width * _scale),
+            (int)(_texture.Height * _scale)
+        );
+
+        bool isOver = buttonRect.Contains((int)IM.MousePosition.X, (int)IM.MousePosition.Y);
+
+        // Debug output when mouse is over button
+        if (isOver && IM.MouseClicked)
+        {
+            Debug.WriteLine("Button clicked - IsMouseOver: true");
         }
 
-        public void Click()
-        {
-            // Debug info
-            System.Diagnostics.Debug.WriteLine($"Button clicked at {Position}");
-            _onClick?.Invoke();
-        }
+        return isOver;
+    }
 
-        public bool IsMouseOver(Rectangle cursorBounds)
+    public void Click()
+    {
+        Debug.WriteLine("Button.Click() called");
+        _onClick?.Invoke();
+    }
+
+    public override void Draw()
+    {
+        if (IsVisible)
         {
-            return _bounds.Intersects(cursorBounds);
+            Globals.SpriteBatch.Draw(_texture, Position, null, _color, 0f, Vector2.Zero, _scale, SpriteEffects.None, 0.9f);
+
+            if (_buttonText != null && _buttonText.IsVisible)
+            {
+                _buttonText.Draw();
+            }
+        }
+    }
+
+    public override void Update()
+    {
+        if (!IsVisible) return;
+
+        // Update button color based on mouse hover
+        _color = IsMouseOver() ? Color.LightGray : Color.White;
+
+        // Check for mouse click
+        if (IsMouseOver() && IM.MouseClicked)
+        {
+            Debug.WriteLine("Button detected click in Update");
+            Click();
         }
     }
 }

@@ -30,7 +30,8 @@ namespace Dredge_lung_test
             // Generate anomalies for this fish
             Anomalies = AnomalyManager.Instance.GenerateAnomaliesForFish(this);
 
-            ZIndex = 30; // Medium priority
+            ZIndex = 30; // This is fine
+            LayerDepth = 0.8f;
             UpdateLayerDepth();
 
             // Initial collision rect setup

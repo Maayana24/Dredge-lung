@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Dredge_lung_test
 {
-    public class FishSpawner
+    public class FishSpawner : IUpdatable
     {
             private readonly List<Fish> _activeFishes;
             private readonly Random _random;
@@ -49,12 +49,12 @@ namespace Dredge_lung_test
             // Modify SpawnFish to use the speed multiplier
             private void SpawnFish(int fishType, bool leftToRight)
             {
-                // Set starting position based on direction (off-screen)
-                float xPos = leftToRight ? -100 : Globals.ScreenWidth + 100; // Off-screen position
-                float yPos = _random.Next(200, Globals.ScreenHeight - 200); // Random y position
-                Vector2 position = new Vector2(xPos, yPos);
+            // Set starting position based on direction (off-screen)
+            float xPos = leftToRight ? PlayableArea.X - 100 : PlayableArea.X + PlayableArea.Width + 100;
+            float yPos = _random.Next(PlayableArea.Y + 200, PlayableArea.Y + PlayableArea.Height - 200);
+            Vector2 position = new Vector2(xPos, yPos);
 
-                (string fishName, Rectangle sourceRect, Vector2 scale, float baseSpeed) = GetFishAttributes(fishType);
+            (string fishName, Rectangle sourceRect, Vector2 scale, float baseSpeed) = GetFishAttributes(fishType);
 
                 // Apply speed multiplier to the base speed
                 float adjustedSpeed = baseSpeed * _speedMultiplier;
@@ -71,11 +71,12 @@ namespace Dredge_lung_test
             // Similarly modify SpawnJelly to use the speed multiplier
             private void SpawnJelly()
             {
-                // Spawn at random x position at the bottom of the screen
-                int xPos = _random.Next(100, Globals.ScreenWidth - 100);
-                Vector2 position = new Vector2(xPos, Globals.ScreenHeight + 50); // Start below the screen
+            // Spawn at random x position at the bottom of the screen
+            int xPos = _random.Next(PlayableArea.X + 100, PlayableArea.X + PlayableArea.Width - 100);
+            Vector2 position = new Vector2(xPos, PlayableArea.Y + PlayableArea.Height + 50);
 
-                Rectangle sourceRect = new Rectangle(150, 210, 250, 300);
+
+            Rectangle sourceRect = new Rectangle(150, 210, 250, 300);
 
                 // Apply speed multiplier to the base speed
                 float adjustedSpeed = 120 * _speedMultiplier;
@@ -161,10 +162,10 @@ namespace Dredge_lung_test
             // Add extra margin to ensure fish is completely off-screen
             const int margin = 200;
 
-            return fish.Position.X < -margin ||
-                   fish.Position.X > Globals.ScreenWidth + margin ||
-                   fish.Position.Y < -margin ||
-                   fish.Position.Y > Globals.ScreenHeight + margin;
+            return fish.Position.X < PlayableArea.X - margin ||
+                   fish.Position.X > PlayableArea.X + PlayableArea.Width + margin ||
+                   fish.Position.Y < PlayableArea.Y - margin ||
+                   fish.Position.Y > PlayableArea.Y + PlayableArea.Height + margin;
         }
     }
 }

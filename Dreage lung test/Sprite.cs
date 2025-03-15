@@ -4,7 +4,7 @@ using System;
 
 namespace Dredge_lung_test
 {
-    public abstract class Sprite : ILayerable
+    public abstract class Sprite : ILayerable, IUpdatable, IDrawable
     {
         public readonly Texture2D Texture;
         protected readonly Vector2 Origin;

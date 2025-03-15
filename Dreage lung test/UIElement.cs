@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Dredge_lung_test
 {
-    public abstract class UIElement : ILayerable
+    public abstract class UIElement : ILayerable, IUpdatable, IDrawable
     {
         public float LayerDepth { get; set; } = 0.0f; // UI should be at the front (0.0f)
         public int ZIndex { get; set; } = 0;

@@ -21,14 +21,18 @@ namespace Dredge_lung_test
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            _graphics.PreferredBackBufferWidth = 1080;
-            _graphics.PreferredBackBufferHeight = 1920;
+            _graphics.PreferredBackBufferWidth = 1920;
+            _graphics.PreferredBackBufferHeight = 1080;
             _graphics.ApplyChanges();
 
             Globals.GraphicsDevice = GraphicsDevice;
-            Globals.ScreenWidth = 1080;
-            Globals.ScreenHeight = 1920;
+            Globals.ScreenWidth = 1920;
+            Globals.ScreenHeight = 1080;
             Globals.Content = Content;
+
+            // Initialize the playable area with your background dimensions
+            PlayableArea.Initialize(1080, 1920);
+
             base.Initialize();
         }
 

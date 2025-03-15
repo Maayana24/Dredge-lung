@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Dredge_lung_test
 {
-    public class RockSpawner
+    public class RockSpawner : IUpdatable
     {
         private readonly List<Rock> _activeRocks;
         private readonly Random _random;
@@ -89,9 +89,12 @@ namespace Dredge_lung_test
             // Choose a random rock type (0-5)
             int rockType = _random.Next(6);
 
-            // Spawn at random x position at the bottom of the screen
-            int xPos = _random.Next(100, Globals.ScreenWidth - 100);
-            Vector2 position = new Vector2(xPos, Globals.ScreenHeight + 50); // Start below the screen
+            // Spawn at random x position within the playable area
+            float xPos = _random.Next(PlayableArea.X, PlayableArea.X + PlayableArea.Width);
+
+            // CHANGE THIS LINE: Position rocks to spawn from top, not bottom
+            // They should start above the screen and move downward
+            Vector2 position = new Vector2(xPos, PlayableArea.Y + PlayableArea.Height + 100);
 
             // Apply speed multiplier to the base speed
             float adjustedSpeed = 150 * _speedMultiplier;
@@ -100,10 +103,10 @@ namespace Dredge_lung_test
             Rock rock = new Rock(
                 _rockTexture,
                 position,
-                adjustedSpeed, // Use adjusted speed
+                adjustedSpeed,
                 _rockRects[rockType],
                 _rockScales[rockType],
-                new Vector2(0, -1) // Moving upward
+                new Vector2(0, -1) // CHANGE THIS: Direction should be downward (0, 1)
             );
 
             _activeRocks.Add(rock);
@@ -137,10 +140,10 @@ namespace Dredge_lung_test
             // Add extra margin to ensure rock is completely off-screen
             const int margin = 200;
 
-            return rock.Position.X < -margin ||
-                   rock.Position.X > Globals.ScreenWidth + margin ||
-                   rock.Position.Y < -margin ||
-                   rock.Position.Y > Globals.ScreenHeight + margin;
+            return rock.Position.X < PlayableArea.X - margin ||
+                   rock.Position.X > PlayableArea.X + PlayableArea.Width + margin ||
+                   rock.Position.Y < PlayableArea.Y - margin ||
+                   rock.Position.Y > PlayableArea.Y + PlayableArea.Height + margin;
         }
 
         // No longer needed as this is handled by CollisionManager

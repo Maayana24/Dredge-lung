@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 
 namespace Dredge_lung_test;
 
@@ -8,7 +9,6 @@ public static class Globals
 {
     public static ContentManager Content { get; set; }
     public static SpriteBatch SpriteBatch { get; set; }
-
     public static GraphicsDevice GraphicsDevice { get; set; }
     public static float DeltaTime { get; set; }
 

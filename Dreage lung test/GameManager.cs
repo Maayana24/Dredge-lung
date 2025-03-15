@@ -1,16 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection.Metadata;
 
 namespace Dredge_lung_test
 {
     public class GameManager
     {
-        private List<ILayerable> _layerableObjects = new List<ILayerable>();
-        private readonly BGM _bgm = new();
         private readonly Player _player;
         private List<Fish> _fishes;
         private List<Rock> _rocks;
@@ -20,70 +19,113 @@ namespace Dredge_lung_test
         private ScoreManager _scoreManager;
         private readonly Harpoon _harpoon;
         private DifficultyManager _difficultyManager;
-        private HighScoreManager _highScoreManager;
+        private readonly BGM _bgm;
+        private List<IUpdatable> _updatables = new List<IUpdatable>();
+        private List<IDrawable> _drawables = new List<IDrawable>();
+        private Song song;
+
 
         // Game state
         private bool _isGameOver = false;
 
         public GameManager()
         {
-            // Initialize fish and rock lists
+            // Load global resources
+            Globals.Font = Globals.Content.Load<SpriteFont>("Fonts/Defult");
+            song = Globals.Content.Load<Song>("Audio/Drowned");
+
+            MediaPlayer.Play(song);
+            MediaPlayer.IsRepeating = true;
+            // Initialize collections
             _fishes = new List<Fish>();
             _rocks = new List<Rock>();
-            _highScoreManager = new HighScoreManager();
-            _ui = new UIManager(_fishes);
+            _updatables = new List<IUpdatable>();
 
-            // Initialize score manager
-            _scoreManager = new ScoreManager(3); // Start with 3 lives
+            // Initialize managers
+            _scoreManager = new ScoreManager(1); // Start with 3 lives
             _scoreManager.GameOver += OnGameOver;
-
-            Globals.Font = Globals.Content.Load<SpriteFont>("Fonts/Defult");
-
-
-            InitializeLayerableObjects();
-
             _difficultyManager = new DifficultyManager();
 
-            // Set up UI after score manager is initialized
+            // Initialize UI
+            _ui = new UIManager(_fishes);
             _ui.SetUpUI();
 
+            // Initialize background
+            _bgm = BGM.Instance;
+            _bgm.InitializeBackground();
+            _bgm.ZIndex = 0;
 
-            // Connect score manager events to UI updates
-            _scoreManager.ScoreChanged += (sender, e) => _ui.UpdateScoreText(_scoreManager.Score);
-            _scoreManager.LivesChanged += (sender, e) => _ui.UpdateLivesText(_scoreManager.Lives);
-
-            //Background layers
-            _bgm.AddLayer(new Layer(LoadAndRotateTexture("1"), 0.0f, 0.0f));
-            _bgm.AddLayer(new Layer(LoadAndRotateTexture("2"), 0.1f, 0.09f));
-            _bgm.AddLayer(new Layer(LoadAndRotateTexture("4"), 0.2f, 0.1f));
-            _bgm.AddLayer(new Layer(LoadAndRotateTexture("5"), 0.3f, 0.2f));
-            _bgm.AddLayer(new Layer(LoadAndRotateTexture("7"), 0.4f, 0.3f));
-            _bgm.AddLayer(new Layer(LoadAndRotateTexture("9"), 0.5f, 0.4f));
-
-            // Create player
+            // Initialize game objects
             _player = new Player(Globals.Content.Load<Texture2D>("Fish/Submarine"), new Vector2(300, 300), _scoreManager);
-
-            // Initialize harpoon
             _harpoon = new Harpoon(_player, _fishes, _scoreManager);
-
-            // Create fish spawner
             _fishSpawner = new FishSpawner(_fishes);
-
-            // Create rock spawner
             _rockSpawner = new RockSpawner(
                 _rocks,
                 Globals.Content.Load<Texture2D>("Rocks"),
                 _scoreManager
             );
 
+            // Connect event handlers
+            ConnectEventHandlers();
+
+            // Register updatable components
+            RegisterUpdatables();
+            RegisterDrawables();
+
+            // Initial UI updates
+            UpdateInitialUI();
+        }
+
+        private void ConnectEventHandlers()
+        {
+            // Score and lives events
+            _scoreManager.ScoreChanged += (sender, e) => _ui.UpdateScoreText(_scoreManager.Score);
+            _scoreManager.LivesChanged += (sender, e) => _ui.UpdateLivesText(_scoreManager.Lives);
+            // Add high score event handler
+            _scoreManager.HighScoreChanged += (sender, e) => _ui.UpdateHighScoreText(_scoreManager.HighScore);
+
+            // Difficulty events
             _difficultyManager.DifficultyChanged += _fishSpawner.OnDifficultyChanged;
             _difficultyManager.DifficultyChanged += _rockSpawner.OnDifficultyChanged;
-            _difficultyManager.DifficultyChanged += OnBGMDifficultyChanged;
+            _difficultyManager.DifficultyChanged += OnDifficultyChanged;
 
-            // Initial UI update
+            _ui.ReplayClicked += (sender, e) => Reset();
+        }
+
+        private void RegisterUpdatables()
+        {
+            _updatables.Add(_player);
+            _updatables.Add(_ui);
+            _updatables.Add(_fishSpawner);
+            _updatables.Add(_rockSpawner);
+            _updatables.Add(_difficultyManager);
+            _updatables.Add(_bgm);
+            _updatables.Add(_harpoon);
+        }
+        private void RegisterDrawables()
+        {
+            // Register background first (drawn first)
+            _drawables.Add(_bgm);
+
+            // Register rocks - assuming Rock implements IDrawable
+            // Don't add individual rocks here, they will be drawn directly from the list
+
+            // Register player and harpoon
+            _drawables.Add(_player);
+            _drawables.Add(_harpoon);
+
+            // Don't add individual fish here, they will be drawn directly from the list
+
+            // Register UI last (drawn on top)
+            _drawables.Add(_ui);
+        }
+
+        private void UpdateInitialUI()
+        {
             _ui.UpdateScoreText(_scoreManager.Score);
             _ui.UpdateLivesText(_scoreManager.Lives);
-            _ui.UpdateHighScoreText(_highScoreManager.GetHighestScore());
+            // Add high score update
+            _ui.UpdateHighScoreText(_scoreManager.HighScore);
         }
 
         public void Update()
@@ -92,19 +134,28 @@ namespace Dredge_lung_test
             if (_isGameOver)
                 return;
 
-            _ui.Update();
+            // Update input and UI
             IM.Update();
-            _bgm.Update(-200);
-            _player.Update();
-            _difficultyManager.Update();
+            foreach (var updatable in _updatables)
+            {
+                updatable.Update();
+            }
 
             // Update collision manager
             CollisionManager.Instance.CheckCollisions();
 
-            // Update harpoon
-            _harpoon.Update();
-
             // Update cooldown text in UI
+            UpdateHarpoonCooldownUI();
+
+            // Update all active fish
+            UpdateEntities(_fishes);
+
+            // Update all active rocks
+            UpdateEntities(_rocks);
+        }
+
+        private void UpdateHarpoonCooldownUI()
+        {
             if (_harpoon.IsInCooldown)
             {
                 float remainingTime = _harpoon.CooldownDuration - _harpoon.CooldownTimer;
@@ -114,71 +165,39 @@ namespace Dredge_lung_test
             {
                 _ui.UpdateCooldownText(false, 0);
             }
+        }
 
-            // Update fish spawner
-            _fishSpawner.Update();
-
-            // Update rock spawner
-            _rockSpawner.Update();
-
-            // Update all active fish
-            foreach (Fish fish in new List<Fish>(_fishes)) // Create a copy to avoid collection modified exception
+        private void UpdateEntities<T>(List<T> entities) where T : class
+        {
+            foreach (var entity in new List<T>(entities)) // Create a copy to avoid collection modified exception
             {
-                fish.Update();
-            }
-
-            // Update all active rocks
-            foreach (Rock rock in new List<Rock>(_rocks)) // Create a copy to avoid collection modified exception
-            {
-                rock.Update();
+                if (entity is IUpdatable updatable)
+                {
+                    updatable.Update();
+                }
             }
         }
 
-        private void OnBGMDifficultyChanged(int level, float speedMultiplier, float spawnRateMultiplier)
+        private void OnDifficultyChanged(int level, float speedMultiplier, float spawnRateMultiplier)
         {
-            // Update BGM speed to match the rock speed multiplier
+            // Update BGM speed to match the difficulty level
             _bgm.SetSpeedMultiplier(speedMultiplier);
-        }
-
-        private void InitializeLayerableObjects()
-        {
-            // Add all layerable objects to the list
-            _layerableObjects.Add(_bgm); // Add single instance, not as a collection
-
-            // Add collections of objects
-            foreach (var fish in _fishes)
-            {
-                if (fish is ILayerable layerable)
-                    _layerableObjects.Add(layerable);
-            }
-
-            foreach (var rock in _rocks)
-            {
-                if (rock is ILayerable layerable)
-                    _layerableObjects.Add(layerable);
-            }
-
-            // Add other layerable objects
-
-            // Update layer depths
-            UpdateAllLayerDepths();
-        }
-
-        private void UpdateAllLayerDepths()
-        {
-            // Sort by ZIndex
-            _layerableObjects = _layerableObjects.OrderBy(l => l.ZIndex).ToList();
-
-            // Update all layer depths
-            foreach (var layer in _layerableObjects)
-            {
-                layer.UpdateLayerDepth();
-            }
         }
 
         public void Draw()
         {
-            _bgm.Draw();
+            // Draw all registered drawables in order of their registration
+            foreach (var drawable in _drawables)
+            {
+                drawable.Draw();
+            }
+
+            // Draw the border masks - this is special and should be drawn after backgrounds
+            // but before most game elements
+            BGM.Instance.DrawBorderMasks();
+
+            // Draw debug visualization
+            DebugRenderer.DrawRectangle(PlayableArea.Bounds, Color.Yellow * 0.5f, 0.9f);
 
             // Draw all active rocks
             foreach (Rock rock in _rocks)
@@ -186,60 +205,41 @@ namespace Dredge_lung_test
                 rock.Draw();
             }
 
-            _player.Draw();
-            _harpoon.Draw();
-
             // Draw all active fish
             foreach (Fish fish in _fishes)
             {
                 fish.Draw();
             }
-
-            // Draw UI elements (includes all text)
-            _ui.Draw();
         }
 
         private void OnGameOver(object sender, EventArgs e)
         {
             _isGameOver = true;
             _ui.ShowGameOver(true);
-
-            // Save the score when game is over
-            _highScoreManager.AddScore(_scoreManager.Score);
-
-            // Update UI to show high score
-            _ui.UpdateHighScoreText(_highScoreManager.GetHighestScore());
         }
 
         public void Reset()
         {
-            // Unregister all collidables (requires adding this code to all collidable classes)
+            // Unregister all collidables
             foreach (Rock rock in _rocks)
             {
                 CollisionManager.Instance.Unregister(rock);
             }
 
+            // Reset game components
             _difficultyManager.Reset();
             _fishes.Clear();
             _rocks.Clear();
             _scoreManager.Reset();
+
+            // Reset game state
             _isGameOver = false;
+
+            // Update UI
             _ui.ShowGameOver(false);
             _ui.UpdateScoreText(_scoreManager.Score);
             _ui.UpdateLivesText(_scoreManager.Lives);
-        }
-
-        private Texture2D LoadAndRotateTexture(string assetName)
-        {
-            Texture2D original = Globals.Content.Load<Texture2D>("Background/" + assetName);
-            RenderTarget2D rotated = new RenderTarget2D(Globals.SpriteBatch.GraphicsDevice, original.Height, original.Width);
-            Globals.SpriteBatch.GraphicsDevice.SetRenderTarget(rotated);
-            Globals.SpriteBatch.GraphicsDevice.Clear(Color.Transparent);
-            Globals.SpriteBatch.Begin();
-            Globals.SpriteBatch.Draw(original, new Vector2(original.Height, 0), null, Color.White, MathHelper.PiOver2, Vector2.Zero, 1.0f, SpriteEffects.None, 0);
-            Globals.SpriteBatch.End();
-            Globals.SpriteBatch.GraphicsDevice.SetRenderTarget(null);
-            return rotated;
+            // High score doesn't need to be updated here as Reset() doesn't affect the high score
         }
     }
 }

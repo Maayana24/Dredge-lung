@@ -2,7 +2,7 @@
 
 namespace Dredge_lung_test
 {
-    public class DifficultyManager
+    public class DifficultyManager : IUpdatable
     {
         // Delegate for difficulty changes
         public delegate void DifficultyChangedHandler(int level, float speedMultiplier, float spawnRateMultiplier);
