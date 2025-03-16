@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Dredge_lung_test
 {
@@ -47,7 +48,7 @@ namespace Dredge_lung_test
             _drawables = new List<IDrawable>();
 
             //Initializing the managers
-            _scoreManager = new ScoreManager(3); //passing number of lives for the player
+            _scoreManager = new ScoreManager(1); //passing number of lives for the player
             _difficultyManager = new DifficultyManager();
 
             _scoreManager.GameOver += OnGameOver; //WIP
@@ -97,7 +98,11 @@ namespace Dredge_lung_test
             _difficultyManager.DifficultyChanged += _rockSpawner.OnDifficultyChanged;
             _difficultyManager.DifficultyChanged += OnDifficultyChanged;
 
-           // _uiManager.ReplayClicked += (sender, e) => Reset();
+            _uiManager.ReplayClicked += (sender, e) =>
+            {
+                Reset();
+            };
+
         }
 
         private void RegisterUpdatables() //Adding updatable class to updatable list
@@ -139,11 +144,15 @@ namespace Dredge_lung_test
 
         public void Update()
         {
+
+
+            IM.Update(); //Updating the input
+
+            _uiManager.Update();
+
             //Stop updating when the game is over
             if (_isGameOver)
                 return;
-
-            IM.Update(); //Updating the input
 
             //Updating classes in updatable list
             foreach (var updatable in _updatables)
