@@ -84,21 +84,19 @@ namespace Dredge_lung_test
 
             // Position the button below the game over text
             ReplayButton = AddButton(
-        new Vector2(
-            (screenWidth - buttonTexture.Width * buttonScale) / 2,
-            (screenHeight - buttonTexture.Height * buttonScale) / 2 + screenHeight * 0.07f), // 7% below center
-        buttonTexture,
-        Color.White,
-        OnReplayClicked,
-        buttonScale);
+                new Vector2(
+                    (screenWidth - buttonTexture.Width * buttonScale) / 2,
+                    (screenHeight - buttonTexture.Height * buttonScale) / 2 + screenHeight * 0.07f), // 7% below center
+                buttonTexture,
+                Color.White,
+                OnReplayClicked,
+                buttonScale);
 
-            ReplayButton.LayerDepth = 0.9f;
             ReplayButton.SetText("Play Again", Color.Black, 1.2f);
             ReplayButton.IsVisible = false;
 
-            // Debug to verify button setup
-            Debug.WriteLine($"ReplayButton added to clickables: {_clickables.Contains(ReplayButton)}");
-            Debug.WriteLine($"ReplayButton bounds: {((Button)ReplayButton)._bounds}");
+            // Log that UI setup is complete
+            Debug.WriteLine("UI setup complete. ReplayButton created.");
         }
 
         // Callback for replay button
@@ -154,14 +152,7 @@ namespace Dredge_lung_test
 
             if (isGameOver)
             {
-                Debug.WriteLine($"Game over UI elements are now visible - Button position: {ReplayButton.Position}, Button visible: {ReplayButton.IsVisible}");
-
-                // Force the button to be in front
-                ReplayButton.LayerDepth = 0.99f;
-                if (ReplayButton is Button btn && btn._labelText != null)
-                {
-                    btn._labelText.LayerDepth = 0.995f;
-                }
+                Debug.WriteLine("Game over UI elements are now visible");
             }
         }
 
@@ -193,8 +184,6 @@ namespace Dredge_lung_test
                 }
             }
 
-            // Add debug to verify check for mouse clicks is happening
-
             // Process clicks
             if (IM.MouseClicked)
             {
@@ -205,20 +194,7 @@ namespace Dredge_lung_test
         private void ProcessMouseClick()
         {
             // Debug output for mouse click
-            Debug.WriteLine("ProcessMouseClick method called!");
             Debug.WriteLine($"Mouse clicked at: {IM.MousePosition}");
-            Debug.WriteLine($"Number of clickables: {_clickables.Count}");
-
-            // Additional debug to help diagnose the issue
-            Debug.WriteLine("Clickable elements:");
-            foreach (var clickable in _clickables)
-            {
-                if (clickable is UIElement element)
-                {
-                    bool isMouseOver = clickable.IsMouseOver();
-                    Debug.WriteLine($"- {element.GetType().Name}: Visible={element.IsVisible}, MouseOver={isMouseOver}, Position={element.Position}");
-                }
-            }
 
             // Process click events for all visible clickable elements
             foreach (var clickable in _clickables)
@@ -228,7 +204,7 @@ namespace Dredge_lung_test
                 {
                     if (clickable.IsMouseOver())
                     {
-                        Debug.WriteLine($"CLICKING ELEMENT: {element.GetType().Name}");
+                        Debug.WriteLine($"Clicking element: {element.GetType().Name}");
                         clickable.Click();
                         break; // Process only the topmost element
                     }
