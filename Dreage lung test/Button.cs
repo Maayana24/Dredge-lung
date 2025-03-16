@@ -1,8 +1,8 @@
 ﻿using Dredge_lung_test;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using System;
 using System.Diagnostics;
+using System;
 
 public class Button : UIElement, IClickable
 {
@@ -11,6 +11,7 @@ public class Button : UIElement, IClickable
     private Texture2D _texture;
     public Text _buttonText;
     private float _scale;
+    private bool _useManualTextPosition = false;
 
     public Button(Vector2 position, Texture2D texture, Color color, Action onClick, float scale = 1.0f) : base(texture, position)
     {
@@ -33,10 +34,30 @@ public class Button : UIElement, IClickable
         else
         {
             _buttonText.SetText(text);
-           // _buttonText.Color = textColor;
+            // _buttonText.Color = textColor;
             _buttonText.Scale = new Vector2(scale, scale);
         }
 
+        if (!_useManualTextPosition)
+        {
+            CenterText();
+        }
+    }
+
+    // New method to manually set text position
+    public void SetTextPosition(Vector2 position)
+    {
+        if (_buttonText != null)
+        {
+            _useManualTextPosition = true;
+            _buttonText.Position = position;
+        }
+    }
+
+    // New method to toggle back to auto-centering
+    public void UseCenteredText()
+    {
+        _useManualTextPosition = false;
         CenterText();
     }
 
@@ -45,25 +66,22 @@ public class Button : UIElement, IClickable
         if (_buttonText != null && _texture != null)
         {
             Vector2 textSize = Globals.Font.MeasureString(_buttonText.GetText()) * _buttonText.Scale.X;
-
             // Calculate the center position of the button
             float buttonCenterX = Position.X + (_texture.Width * _scale / 2);
             float buttonCenterY = Position.Y + (_texture.Height * _scale / 2);
-
             // Position the text so its center aligns with the button's center
             Vector2 centeredPosition = new Vector2(
                 buttonCenterX - (textSize.X / 2),
-                buttonCenterY - (textSize.Y / 2)
+                buttonCenterY - (textSize.Y / 2f)
             );
-
             _buttonText.Position = centeredPosition;
-
             // Debug output to see text positioning
             Debug.WriteLine($"Button Position: {Position}, Size: {_texture.Width * _scale}x{_texture.Height * _scale}");
             Debug.WriteLine($"Text Size: {textSize.X}x{textSize.Y}, Centered Position: {centeredPosition}");
         }
     }
 
+    // Rest of the class remains the same
     public bool IsMouseOver()
     {
         Rectangle buttonRect = new Rectangle(
@@ -72,15 +90,12 @@ public class Button : UIElement, IClickable
             (int)(_texture.Width * _scale),
             (int)(_texture.Height * _scale)
         );
-
         bool isOver = buttonRect.Contains((int)IM.MousePosition.X, (int)IM.MousePosition.Y);
-
         // Debug output when mouse is over button
         if (isOver && IM.MouseClicked)
         {
             Debug.WriteLine("Button clicked - IsMouseOver: true");
         }
-
         return isOver;
     }
 
@@ -95,7 +110,6 @@ public class Button : UIElement, IClickable
         if (IsVisible)
         {
             Globals.SpriteBatch.Draw(_texture, Position, null, _color, 0f, Vector2.Zero, _scale, SpriteEffects.None, 0.9f);
-
             if (_buttonText != null && _buttonText.IsVisible)
             {
                 _buttonText.Draw();
@@ -106,10 +120,8 @@ public class Button : UIElement, IClickable
     public override void Update()
     {
         if (!IsVisible) return;
-
         // Update button color based on mouse hover
         _color = IsMouseOver() ? Color.LightGray : Color.White;
-
         // Check for mouse click
         if (IsMouseOver() && IM.MouseClicked)
         {

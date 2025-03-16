@@ -92,11 +92,12 @@ namespace Dredge_lung_test
                 OnReplayClicked,
                 buttonScale);
 
-            ReplayButton.SetText("Play Again", Color.Black, 1.2f);
+            ReplayButton.SetText("Play Again", Color.White, 1.4f);
+            // If you want to manually position the text, add this line:
+            ReplayButton.SetTextPosition(new Vector2(
+                (screenWidth - buttonTexture.Width * buttonScale) / 2 + 20, // Adjust X as needed
+                (screenHeight - buttonTexture.Height * buttonScale) / 2 + screenHeight * 0.07f + 15)); // Adjust Y as needed
             ReplayButton.IsVisible = false;
-
-            // Log that UI setup is complete
-            Debug.WriteLine("UI setup complete. ReplayButton created.");
         }
 
         // Callback for replay button
