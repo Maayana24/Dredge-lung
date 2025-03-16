@@ -107,10 +107,8 @@ namespace Dredge_lung_test
 
         public void Deactivate()
         {
-            if (!IsActive) return;
-
             IsActive = false;
-            // Unregister from collision manager
+            // Unregister from collision manager if needed
             CollisionManager.Instance.Unregister(this);
         }
     }
