@@ -6,117 +6,76 @@ using System.Diagnostics;
 
 namespace Dredge_lung_test
 {
+    //Singleton class to manage the game's UI
     public class UIManager : IUpdatable, IDrawable
     {
+        //Gets the singleton instance
+        private static UIManager _instance;
+        public static UIManager Instance => _instance ??= new UIManager();
+
         private readonly List<UIElement> _uiElements = new List<UIElement>();
         private readonly List<IClickable> _clickables = new List<IClickable>();
-        private List<Fish> _fishes;
 
         public event EventHandler ReplayClicked;
 
-        // UI text elements
+        //Text elements
         public Text ScoreText { get; private set; }
         public Text LivesText { get; private set; }
         public Text CooldownText { get; private set; }
         public Text GameOverText { get; private set; }
         public Text HighScoreText { get; private set; }
 
-        // Button elements
+        //Button elements
         public Button ReplayButton { get; private set; }
 
-        public UIManager(List<Fish> fishes)
-        {
-            _fishes = fishes;
-        }
+        private UIManager() { }
 
         public void SetUpUI()
         {
-            // Get screen dimensions
+            //Get the screen dimensions from Globals
             float screenWidth = Globals.ScreenWidth;
             float screenHeight = Globals.ScreenHeight;
+            Texture2D buttonTexture = Globals.Content.Load<Texture2D>("UI/Button"); //Default button texture
 
-            // Create score text in the top right (85% of screen width)
-            ScoreText = AddText(
-                new Vector2(screenWidth * 0.85f, screenHeight * 0.05f),
-                "Score: 0",
-                Color.White,
-                1.5f);
 
-            // Create high score text (slight offset below score)
-            HighScoreText = AddText(
-                new Vector2(screenWidth * 0.79f, screenHeight * 0.11f),
-                "High Score: 0",
-                Color.Gold,
-                1.5f);
+            //Creating UI texts
+            ScoreText = AddText(new Vector2(screenWidth * 0.85f, screenHeight * 0.05f), "Score: 0", Color.White, 1.5f);
+            HighScoreText = AddText(new Vector2(screenWidth * 0.79f, screenHeight * 0.11f), "High Score: 0", Color.Gold, 1.5f);
+            LivesText = AddText(new Vector2(screenWidth * 0.01f, screenHeight * 0.05f), "Lives: 3", Color.White, 1.5f);
+            CooldownText = AddText(new Vector2(screenWidth * 0.5f - 180, screenHeight * 0.05f), "", Color.Yellow, 1.3f);
+            GameOverText = AddText(new Vector2(screenWidth * 0.44f - 180, screenHeight * 0.3f), "GAME OVER", Color.Red, 4);
 
-            // Create lives text in the top left (1% from left edge)
-            LivesText = AddText(
-                new Vector2(screenWidth * 0.01f, screenHeight * 0.05f),
-                "Lives: 3",
-                Color.White,
-                1.5f);
-
-            // Create cooldown text at the top center
-            CooldownText = AddText(
-                new Vector2(screenWidth * 0.5f - 180, screenHeight * 0.05f),
-                "",
-                Color.Yellow,
-                1.3f);
-            CooldownText.IsVisible = false;
-
-            // Create game over text (initially invisible)
-            GameOverText = AddText(
-                new Vector2(0, 0),
-                "GAME OVER",
-                Color.Red,
-                2);
-            GameOverText.IsVisible = false;
-
-            // Center the game over text properly
-            Vector2 gameOverSize = Globals.Font.MeasureString("GAME OVER") * 2; // Account for scale
-            GameOverText.Position = new Vector2(
-                (screenWidth - gameOverSize.X) / 2,
-                (screenHeight - gameOverSize.Y) / 2 - screenHeight * 0.07f); // Position higher (7% of screen)
-
-            // Initialize the ReplayButton with a smaller scale
-            Texture2D buttonTexture = Globals.Content.Load<Texture2D>("UI/Button");
-            float buttonScale = 0.4f;
-
-            // Position the button below the game over text
+            //Adding buttons
             ReplayButton = AddButton(
-                new Vector2(
-                    (screenWidth - buttonTexture.Width * buttonScale) / 2,
-                    (screenHeight - buttonTexture.Height * buttonScale) / 2 + screenHeight * 0.07f), // 7% below center
+                new Vector2((screenWidth - buttonTexture.Width * 0.4f) / 2,
+                (screenHeight - buttonTexture.Height * 2f) / 2 + screenHeight * 0.3f),
                 buttonTexture,
                 Color.White,
                 OnReplayClicked,
-                buttonScale);
+                0.4f);
 
+            //Setting up replay button text
             ReplayButton.SetText("Play Again", Color.White, 1.4f);
-            // If you want to manually position the text, add this line:
-            ReplayButton.SetTextPosition(new Vector2(
-                (screenWidth - buttonTexture.Width * buttonScale) / 2 + 20, // Adjust X as needed
-                (screenHeight - buttonTexture.Height * buttonScale) / 2 + screenHeight * 0.07f + 15)); // Adjust Y as needed
+            ReplayButton.SetTextPosition(new Vector2((screenWidth - buttonTexture.Width * 0.25f) / 2, (screenHeight - buttonTexture.Height * 2f) / 2 + screenHeight * 0.43f));
+
+            //Initially invisible texts
+            CooldownText.IsVisible = false;
+            GameOverText.IsVisible = false;
             ReplayButton.IsVisible = false;
         }
-
-        // Callback for replay button
-        private void OnReplayClicked()
+        private void OnReplayClicked() //Replay button callback
         {
-            Debug.WriteLine("OnReplayClicked method called");
-
-            // If there are any subscribers, invoke the event
             if (ReplayClicked != null)
             {
-                Debug.WriteLine("Invoking ReplayClicked event");
                 ReplayClicked.Invoke(this, EventArgs.Empty);
             }
             else
             {
-                Debug.WriteLine("WARNING: ReplayClicked event has no subscribers!");
+                Debug.WriteLine("ReplayClicked has no subscribers!");
             }
         }
 
+        //Methods to update the texts
         public void UpdateScoreText(int score)
         {
             ScoreText.SetText($"Score: {score}");
@@ -145,19 +104,13 @@ namespace Dredge_lung_test
             }
         }
 
-        public void ShowGameOver(bool isGameOver)
+        public void ShowGameOver(bool isGameOver) //Show game over UI
         {
-            Debug.WriteLine($"ShowGameOver: {isGameOver}");
             GameOverText.IsVisible = isGameOver;
             ReplayButton.IsVisible = isGameOver;
-
-            if (isGameOver)
-            {
-                Debug.WriteLine("Game over UI elements are now visible");
-            }
         }
 
-        // Button creation method
+        //Button creation method
         public Button AddButton(Vector2 position, Texture2D texture, Color color, Action onClick, float scale = 1.0f)
         {
             var button = new Button(position, texture, color, onClick, scale);
@@ -166,7 +119,7 @@ namespace Dredge_lung_test
             return button;
         }
 
-        // Text creation method
+        //Text creation method
         public Text AddText(Vector2 position, string text, Color color, float scale)
         {
             Text textElement = new Text(Globals.Font, text, position, color, scale);
@@ -176,7 +129,7 @@ namespace Dredge_lung_test
 
         public void Update()
         {
-            // Update all UI elements
+            //Updating all the UI elements
             foreach (var element in _uiElements)
             {
                 if (element.IsVisible)
@@ -185,46 +138,29 @@ namespace Dredge_lung_test
                 }
             }
 
-            // Process clicks
+            //Reacting to mouse clicks
             if (IM.MouseClicked)
             {
-                ProcessMouseClick();
+                MouseClicking();
             }
         }
 
-        private void ProcessMouseClick()
+        private void MouseClicking() //Reaction to the mouse being clicked
         {
-            // Debug output for mouse click
-            Debug.WriteLine($"Mouse clicked at: {IM.MousePosition}");
-
-            // Process click events for all visible clickable elements
             foreach (var clickable in _clickables)
             {
-                // Check if the element is visible and if it's a UIElement
-                if (clickable is UIElement element && element.IsVisible)
+                if (clickable is UIElement element && element.IsVisible) //Checking if the clickable object is UI and visible
                 {
                     if (clickable.IsMouseOver())
                     {
-                        Debug.WriteLine($"Clicking element: {element.GetType().Name}");
                         clickable.Click();
-                        break; // Process only the topmost element
+                        break; //Stop after the top element
                     }
                 }
             }
         }
 
-        public void Draw()
-        {
-            // Draw all visible UI elements
-            foreach (var element in _uiElements)
-            {
-                if (element.IsVisible)
-                {
-                    element.Draw();
-                }
-            }
-        }
-
+        //Adding and removing UI elements to the correct lists
         public void AddElement(UIElement element)
         {
             _uiElements.Add(element);
@@ -234,12 +170,23 @@ namespace Dredge_lung_test
             }
         }
 
-        public void RemoveElement(UIElement element)
+        public void RemoveElement(UIElement element) //Not being used but worth keeping
         {
             _uiElements.Remove(element);
             if (element is IClickable clickable)
             {
                 _clickables.Remove(clickable);
+            }
+        }
+        public void Draw()
+        {
+            //Drawing the visible UI elements
+            foreach (var element in _uiElements)
+            {
+                if (element.IsVisible)
+                {
+                    element.Draw();
+                }
             }
         }
     }

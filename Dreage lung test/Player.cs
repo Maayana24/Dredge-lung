@@ -7,8 +7,7 @@ namespace Dredge_lung_test
 {
     public class Player : Sprite, ICollidable, ILayerable
     {
-        private ScoreManager _scoreManager;
-
+        private ScoreManager _scoreManager => ScoreManager.Instance;
         public bool IsHarpoonFiring { get; set; }
 
         private Vector2 _velocity = Vector2.Zero;
@@ -27,7 +26,7 @@ namespace Dredge_lung_test
         public Rectangle Bounds { get; private set; }
         public bool IsActive { get; private set; } = true;
 
-        public Player(Texture2D texture, Vector2 position, ScoreManager scoreManager) : base(texture, position)
+        public Player(Vector2 position) : base(Globals.Content.Load<Texture2D>("Fish/Submarine"), position)
         {
             Speed = 400;
             Scale = new Vector2(0.15f, 0.15f);
@@ -42,7 +41,7 @@ namespace Dredge_lung_test
 
             // Register with collision manager
             CollisionManager.Instance.Register(this);
-            _scoreManager = scoreManager;
+
         }
 
         public override void Update()

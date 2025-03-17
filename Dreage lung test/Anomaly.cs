@@ -1,15 +1,16 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System;
+using System.Diagnostics;
 
 namespace Dredge_lung_test
 {
-    public enum AnomalyType
+    public enum AnomalyType //Anomaly enum to add more types in the future
     {
         ExtraLimbs,
         Inflammation
     }
-
+    //Anomaly class represents the anomalies that gets drawn on the fish
     public class Anomaly : ILayerable
     {
         public float LayerDepth { get; set; } = 0.7f;
@@ -18,21 +19,14 @@ namespace Dredge_lung_test
         public Texture2D Texture { get; private set; }
         public Rectangle SourceRect { get; private set; }
 
-        // Static counter for unique IDs
-        private static int _idCounter = 0;
-        private int _id;
-
-        // Constructor
         public Anomaly(AnomalyType type, Texture2D texture, Rectangle sourceRect)
         {
             Type = type;
             Texture = texture;
             SourceRect = sourceRect;
-            _id = _idCounter++;
         }
-        public void UpdateLayerDepth()
+        public void UpdateLayerDepth() //Updating the anomaly layer depth based on the Z-index
         {
-            // Base anomaly depth
             float baseDepth = 0.7f;
             float zIndexContribution = ZIndex / 100.0f;
 
@@ -41,33 +35,20 @@ namespace Dredge_lung_test
         }
 
 
-         public void Draw(Vector2 position, Vector2 scale, SpriteEffects spriteEffect, float layerDepth)
+        public void Draw(Vector2 position, Vector2 scale, SpriteEffects spriteEffect, float layerDepth)
     {
-        try
-        {
-            Globals.SpriteBatch.Draw(
-                Texture,
-                position,
-                SourceRect,
-                Color.White,
-                0,
-                new Vector2(SourceRect.Width / 2, SourceRect.Height / 2),
-                scale,
-                spriteEffect,
-                layerDepth  // Use the passed parameter instead of the property
-            );
+             try
+             {
+                Globals.SpriteBatch.Draw(Texture, position, SourceRect, Color.White, 0, new Vector2(SourceRect.Width / 2, SourceRect.Height / 2), scale, spriteEffect, layerDepth);
             
-            int width = (int)(SourceRect.Width * scale.X * 0.5f);
-            int height = (int)(SourceRect.Height * scale.Y * 0.5f);
-            Rectangle bounds = new Rectangle((int)(position.X - width / 2), (int)(position.Y - height / 2), width, height);
-            
-            // Draw debug outline at the same layer depth + small offset
-            DebugRenderer.DrawRectangle(bounds, Color.Yellow, layerDepth + 0.01f);
-        }
-        catch (Exception ex)
-        {
-            //Console.WriteLine($"ERROR drawing anomaly #{_id}: {ex.Message}");
-        }
+                int width = (int)(SourceRect.Width * scale.X * 0.5f);
+                int height = (int)(SourceRect.Height * scale.Y * 0.5f);
+                Rectangle bounds = new Rectangle((int)(position.X - width / 2), (int)(position.Y - height / 2), width, height);
+             }
+             catch (Exception ex)
+             {
+                Debug.WriteLine($"Error drawing anomaly: {ex.Message}");
+             }
     }
     }
 }

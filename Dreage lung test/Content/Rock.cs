@@ -5,12 +5,10 @@ namespace Dredge_lung_test
 {
     public class Rock : Sprite, ICollidable, ILayerable
     {
-        private int _rockType;
         public Rectangle SourceRect { get; private set; }
         public bool IsActive { get; private set; } = true;
 
-        public Rock(Texture2D texture, Vector2 position, float speed, Rectangle sourceRect, Vector2 scale, Vector2 direction)
-            : base(texture, position)
+        public Rock(Texture2D texture, Vector2 position, float speed, Rectangle sourceRect, Vector2 scale, Vector2 direction) : base(Globals.Content.Load<Texture2D>("Rocks"), position)
         {
             Speed = speed;
             Scale = scale;

@@ -3,16 +3,17 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 namespace Dredge_lung_test
 {
+    //Class that represent the fish in the game
     public class Fish : Sprite, ICollidable, ILayerable
     {
-        public Rectangle SourceRect { get; private set; } //WHATS THE DIFFIRENCE
+        public Rectangle SourceRect { get; private set; }
         private Rectangle CollisionRect { get; set; }
         public string Name { get; private set; } //So I could easily differentiate the fish 
         public List<Anomaly> Anomalies { get; private set; }
         public bool IsActive { get; private set; } = true;
         public bool HasAnomalies => Anomalies.Count > 0; //To check if the fish has anomalies
 
-        public static bool ShowCollisionRects = true; //Debug
+        public static bool ShowCollisionRects = false; //Debug
 
 
         public Fish(string name, Vector2 position, float speed = 150, Rectangle sourceRect = default, Vector2? scale = null, Vector2? direction = null)
@@ -30,11 +31,9 @@ namespace Dredge_lung_test
             LayerDepth = 0.8f;
             UpdateLayerDepth();
 
-            // Initial collision rect setup????
-            UpdateCollisionRect();
+            UpdateCollisionRect(); //Setup initial collision rectangle
 
-            // Register with collision manager????
-            CollisionManager.Instance.Register(this);
+            CollisionManager.Instance.Register(this); //Register with collision manager
         }
 
         public override void Update()
@@ -57,20 +56,20 @@ namespace Dredge_lung_test
             }
         }
 
-        public virtual void Movement()
+        private void Movement()
         {
             Position += Speed * Direction * Globals.DeltaTime;
         }
 
-        protected virtual void UpdateCollisionRect()
+        private void UpdateCollisionRect() //Updating the collision to follow the fish position
         {
             int width = (int)(SourceRect.Width * Scale.X);
             int height = (int)(SourceRect.Height * Scale.Y);
-            CollisionRect = new Rectangle((int)(Position.X - width / 2), (int)(Position.Y - height / 2), width, height); //COLLISION SOURCERECT AND BOUNDS????
+            CollisionRect = new Rectangle((int)(Position.X - width / 2), (int)(Position.Y - height / 2), width, height);
             Bounds = CollisionRect;
         }
 
-        public Rectangle GetSourceRect() //????
+        public Rectangle GetSourceRect()
         {
             return SourceRect;
         }
@@ -88,7 +87,7 @@ namespace Dredge_lung_test
                 anomaly.Draw(Position, Scale, SpriteEffect, anomaly.LayerDepth);
             }
 
-            // Debug: Draw collision rectangle
+            //Draw collision rectangle for debugging
             if (ShowCollisionRects)
             {
                 DebugRenderer.DrawRectangle(CollisionRect, Color.Green, LayerDepth + 0.02f);
@@ -97,18 +96,15 @@ namespace Dredge_lung_test
 
         public void OnCollision(ICollidable other)
         {
-            // Handle collision with harpoon
-            if (other is Harpoon && IsActive)
+            if (other is Rock && IsActive)
             {
-                // Collision handling is primarily done in the Harpoon class
-                // Fish could react here if needed
+                //Add direction change to fish when hitting a rock in the future
             }
         }
 
         public void Deactivate()
         {
             IsActive = false;
-            // Unregister from collision manager if needed
             CollisionManager.Instance.Unregister(this);
         }
     }

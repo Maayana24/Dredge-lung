@@ -6,80 +6,68 @@ namespace Dredge_lung_test
 {
     public class FishSpawner : BaseSpawner<Fish>
     {
-        private const int JellySpawnChance = 10; // Chance to spawn a Jelly
+        private const int JellySpawnChance = 10; //Chance to spawn a Jelly
 
-        public FishSpawner(List<Fish> fishes)
-            : base(fishes, 0.5f, 2.0f) // baseMinSpawnTime, baseMaxSpawnTime
+        public FishSpawner(List<Fish> fishes) : base(fishes, 0.5f, 2.0f) //baseMinSpawnTime, baseMaxSpawnTime
         {
-            // Ensure AnomalyManager is initialized
-            AnomalyManager.Instance.ToString();
+            AnomalyManager.Instance.ToString(); //Initialize anomaly manager
         }
 
-        // Override OnDifficultyChanged to use the custom formula for fish spawn rate
-        public override void OnDifficultyChanged(int level, float speedMultiplier, float spawnRateMultiplier)
+        public override void OnDifficultyChanged(int level, float speedMultiplier, float spawnRateMultiplier) //Override OnDifficultyChanged for the custom fish values
         {
             _speedMultiplier = speedMultiplier;
-
-            // Decrease spawn times (faster spawning) as difficulty increases
-            // Note the custom formula with (spawnRateMultiplier / 2)
             _currentMinSpawnTime = _baseMinSpawnTime / (spawnRateMultiplier / 2);
             _currentMaxSpawnTime = _baseMaxSpawnTime / (spawnRateMultiplier / 2);
         }
 
         protected override void SpawnRandomEntity()
         {
-            // 1 in 10 chance to spawn a Jelly
-            if (_random.Next(JellySpawnChance) == 0)
+            if (_random.Next(JellySpawnChance) == 0) //Spawn jellyfish according to the spawn chance
             {
                 SpawnJelly();
             }
-            else
+            else //If not a jelly fish spawn a different type
             {
-                // Choose a random horizontal fish type (0=Grouper, 1=Angler, 2=Eel, 3=Shark)
-                int fishType = _random.Next(4);
-                bool leftToRight = _random.Next(2) == 0; // 50% chance for each direction
+                int fishType = _random.Next(4); //Number of fish types (not including jellyfish)
+                bool leftToRight = _random.Next(2) == 0; //50% chance for each direction
 
                 SpawnFish(fishType, leftToRight);
             }
         }
 
-        private void SpawnFish(int fishType, bool leftToRight)
+        private void SpawnFish(int fishType, bool leftToRight) //Spawn a fish by type and spawn direction
         {
-            // Set starting position based on direction (off-screen)
+            //Set starting position based on direction (off-screen)
             float xPos = leftToRight ? PlayableArea.X - 100 : PlayableArea.X + PlayableArea.Width + 100;
             float yPos = _random.Next(PlayableArea.Y + 200, PlayableArea.Y + PlayableArea.Height - 200);
             Vector2 position = new Vector2(xPos, yPos);
 
-            (string fishName, Rectangle sourceRect, Vector2 scale, float baseSpeed) = GetFishAttributes(fishType);
+            (string fishName, Rectangle sourceRect, Vector2 scale, float baseSpeed) = GetFishAttributes(fishType); //Gets the attributes of the chosen fish type
 
-            // Apply speed multiplier to the base speed
-            float adjustedSpeed = baseSpeed * _speedMultiplier;
+            float adjustedSpeed = baseSpeed * _speedMultiplier; //Change speed based on speed multiplier
 
-            // Create the fish with the determined parameters
-            Fish fish = new Fish(fishName, position, adjustedSpeed, sourceRect, scale);
+            Fish fish = new Fish(fishName, position, adjustedSpeed, sourceRect, scale); //Create the fish with the chosen attributes
 
-            // Set direction based on spawn side
-            fish.Direction = leftToRight ? new Vector2(1, 0) : new Vector2(-1, 0);
+            fish.Direction = leftToRight ? new Vector2(1, 0) : new Vector2(-1, 0); //Set the direction based on spawn side
 
             _activeEntities.Add(fish);
         }
 
         private void SpawnJelly()
         {
-            // Spawn at random x position at the bottom of the screen
+            //Spawn at random x position at the bottom of the screen
             int xPos = _random.Next(PlayableArea.X + 100, PlayableArea.X + PlayableArea.Width - 100);
             Vector2 position = new Vector2(xPos, PlayableArea.Y + PlayableArea.Height + 50);
 
             Rectangle sourceRect = new Rectangle(150, 210, 250, 300);
 
-            // Apply speed multiplier to the base speed
-            float adjustedSpeed = 120 * _speedMultiplier;
+            float adjustedSpeed = 120 * _speedMultiplier; //Change speed based on speed multiplier
 
             Fish jelly = new Fish("Jelly", position, adjustedSpeed, sourceRect, new Vector2(0.5f, 0.5f), new Vector2(0, -1));
             _activeEntities.Add(jelly);
         }
 
-        private (string fishName, Rectangle sourceRect, Vector2 scale, float speed) GetFishAttributes(int fishType)
+        private (string fishName, Rectangle sourceRect, Vector2 scale, float speed) GetFishAttributes(int fishType) //Returns the correct attributes based on the fish type
         {
             switch (fishType)
             {
@@ -103,15 +91,11 @@ namespace Dredge_lung_test
 
         protected override bool IsEntityActive(Fish fish)
         {
-            // Assuming Fish class has been updated to include IsActive property
-            // For backward compatibility, you can return true if Fish doesn't have IsActive yet
             return fish.IsActive;
         }
 
         protected override void DeactivateEntity(Fish fish)
         {
-            // Assuming Fish class has been updated to include Deactivate method
-            // If Fish hasn't been updated yet, this might be empty
             fish.Deactivate();
         }
     }

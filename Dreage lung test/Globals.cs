@@ -16,11 +16,6 @@ public static class Globals //Global attributes I want access from everywhere
     public static int ScreenWidth { get; set; }
     public static int ScreenHeight { get; set; }
 
-
-    public static Vector2 Position(int x, int y) //WIP
-        { return new Vector2(x, y); }
-
-
     public static void Update(GameTime gameTime)
     {
         DeltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;

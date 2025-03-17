@@ -3,44 +3,38 @@ using System.Collections.Generic;
 
 namespace Dredge_lung_test
 {
+    //Class to manage collision conditions and checks
     public class CollisionManager
     {
         private static CollisionManager _instance;
         private HashSet<ICollidable> _collidables = new HashSet<ICollidable>();
-
-        // Singleton pattern
         private CollisionManager() { }
 
         public static CollisionManager Instance => _instance ??= new CollisionManager();
 
-        // Register a collidable object
         public void Register(ICollidable collidable)
         {
             _collidables.Add(collidable);
         }
 
-        // Unregister a collidable object
         public void Unregister(ICollidable collidable)
         {
             _collidables.Remove(collidable);
         }
 
-        // Check for collisions between all registered objects
-        public void CheckCollisions()
+        public void CheckCollisions() //Checking collision for all collidable objects
         {
-            // Create a temporary list of active collidables
             List<ICollidable> activeCollidables = new List<ICollidable>();
 
-            // Only process active collidables
-            foreach (var collidable in _collidables)
+            foreach (var collidable in _collidables) 
             {
-                if (collidable.IsActive)
+                if (collidable.IsActive) //Check only active objects
                 {
                     activeCollidables.Add(collidable);
                 }
             }
 
-            // Check each collidable against all others
+            //Checking each collidable against all other ones
             for (int i = 0; i < activeCollidables.Count; i++)
             {
                 for (int j = i + 1; j < activeCollidables.Count; j++)
@@ -48,39 +42,17 @@ namespace Dredge_lung_test
                     ICollidable a = activeCollidables[i];
                     ICollidable b = activeCollidables[j];
 
-                    // Skip if either object is no longer active
-                    if (!a.IsActive || !b.IsActive)
+                    if (!a.IsActive || !b.IsActive) //skip if both of them are inactive
                         continue;
 
-                    // Check for collision
-                    if (a.Bounds.Intersects(b.Bounds))
+                    if (a.Bounds.Intersects(b.Bounds)) //Check if there's collision
                     {
-                        // Notify both objects of the collision
+                        //Notify both objects of their collision
                         a.OnCollision(b);
                         b.OnCollision(a);
                     }
                 }
             }
-        }
-
-        // Check if a specific object collides with any other
-        public bool CheckCollision(ICollidable source, out ICollidable collisionTarget)
-        {
-            collisionTarget = null;
-
-            if (!source.IsActive)
-                return false;
-
-            foreach (var target in _collidables)
-            {
-                if (target != source && target.IsActive && source.Bounds.Intersects(target.Bounds))
-                {
-                    collisionTarget = target;
-                    return true;
-                }
-            }
-
-            return false;
         }
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using System.Diagnostics;
 using System;
 
+//Class representing a button in UI
 public class Button : UIElement, IClickable
 {
     private Action _onClick;
@@ -20,13 +21,24 @@ public class Button : UIElement, IClickable
         _texture = texture;
         _scale = scale;
     }
+    public override void Update()
+    {
+        if (!IsVisible) return;
 
-    public void SetText(string text, Color textColor, float scale = 1.0f)
+        _color = IsMouseOver() ? Color.LightGray : Color.White; //Darker color if the mouse is over
+
+        if (IsMouseOver() && IM.MouseClicked) //Call click method if the button is clicked
+        {
+            Click();
+        }
+    }
+
+    public void SetText(string text, Color textColor, float scale = 1.0f) //Setting the text on the button if it has any
     {
         if (Globals.Font == null)
             return;
 
-        if (_buttonText == null)
+        if (_buttonText == null) //If button text is null create one
         {
             _buttonText = new Text(Globals.Font, text, Vector2.Zero, textColor, scale);
             _buttonText.IsVisible = true;
@@ -34,18 +46,16 @@ public class Button : UIElement, IClickable
         else
         {
             _buttonText.SetText(text);
-            // _buttonText.Color = textColor;
             _buttonText.Scale = new Vector2(scale, scale);
         }
 
-        if (!_useManualTextPosition)
+        if (!_useManualTextPosition) //Automatically center the text on the button
         {
             CenterText();
         }
     }
 
-    // New method to manually set text position
-    public void SetTextPosition(Vector2 position)
+    public void SetTextPosition(Vector2 position) //If the text should have a specific position adjust position manually
     {
         if (_buttonText != null)
         {
@@ -54,54 +64,31 @@ public class Button : UIElement, IClickable
         }
     }
 
-    // New method to toggle back to auto-centering
-    public void UseCenteredText()
-    {
-        _useManualTextPosition = false;
-        CenterText();
-    }
-
-    private void CenterText()
+    private void CenterText() //Centering the text on the button
     {
         if (_buttonText != null && _texture != null)
         {
             Vector2 textSize = Globals.Font.MeasureString(_buttonText.GetText()) * _buttonText.Scale.X;
-            // Calculate the center position of the button
+
+            //Calculating the center of the button
             float buttonCenterX = Position.X + (_texture.Width * _scale / 2);
             float buttonCenterY = Position.Y + (_texture.Height * _scale / 2);
-            // Position the text so its center aligns with the button's center
-            Vector2 centeredPosition = new Vector2(
-                buttonCenterX - (textSize.X / 2),
-                buttonCenterY - (textSize.Y / 2f)
-            );
+
+            //Positioning the text so its center aligns with the button's center
+            Vector2 centeredPosition = new Vector2(buttonCenterX - (textSize.X / 2), buttonCenterY - (textSize.Y / 2f));
             _buttonText.Position = centeredPosition;
-            // Debug output to see text positioning
-            Debug.WriteLine($"Button Position: {Position}, Size: {_texture.Width * _scale}x{_texture.Height * _scale}");
-            Debug.WriteLine($"Text Size: {textSize.X}x{textSize.Y}, Centered Position: {centeredPosition}");
         }
     }
-
-    // Rest of the class remains the same
-    public bool IsMouseOver()
+    public bool IsMouseOver() //Check if the mouse is over the button
     {
-        Rectangle buttonRect = new Rectangle(
-            (int)Position.X,
-            (int)Position.Y,
-            (int)(_texture.Width * _scale),
-            (int)(_texture.Height * _scale)
-        );
+        Rectangle buttonRect = new Rectangle((int)Position.X, (int)Position.Y, (int)(_texture.Width * _scale), (int)(_texture.Height * _scale));
         bool isOver = buttonRect.Contains((int)IM.MousePosition.X, (int)IM.MousePosition.Y);
-        // Debug output when mouse is over button
-        if (isOver && IM.MouseClicked)
-        {
-            Debug.WriteLine("Button clicked - IsMouseOver: true");
-        }
+
         return isOver;
     }
 
-    public void Click()
+    public void Click() //Invoking click event
     {
-        Debug.WriteLine("Button.Click() called");
         _onClick?.Invoke();
     }
 
@@ -114,19 +101,6 @@ public class Button : UIElement, IClickable
             {
                 _buttonText.Draw();
             }
-        }
-    }
-
-    public override void Update()
-    {
-        if (!IsVisible) return;
-        // Update button color based on mouse hover
-        _color = IsMouseOver() ? Color.LightGray : Color.White;
-        // Check for mouse click
-        if (IsMouseOver() && IM.MouseClicked)
-        {
-            Debug.WriteLine("Button detected click in Update");
-            Click();
         }
     }
 }

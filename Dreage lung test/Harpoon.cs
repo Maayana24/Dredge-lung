@@ -18,8 +18,7 @@ namespace Dredge_lung_test
         // References
         private readonly Player _player;
         private readonly List<Fish> _fishes;
-        private readonly ScoreManager _scoreManager;
-
+        private ScoreManager _scoreManager => ScoreManager.Instance;
         public float CooldownTimer { get; private set; }
         public float CooldownDuration { get; private set; }
         public HarpoonState State { get; private set; }
@@ -44,12 +43,11 @@ namespace Dredge_lung_test
         private readonly Color _harpoonColor = Color.Black;
         private readonly float _harpoonLayer = 0.85f;
 
-        public Harpoon(Player player, List<Fish> fishes, ScoreManager scoreManager)
+        public Harpoon(Player player, List<Fish> fishes)
             : base(new Texture2D(Globals.GraphicsDevice, 1, 1), player.Position)
         {
             _player = player;
             _fishes = fishes;
-            _scoreManager = scoreManager;
             _origin = player.Position;
             _length = 0f;
             _maxLength = 400; // Maximum range

@@ -8,7 +8,6 @@ namespace Dredge_lung_test
     public class RockSpawner : BaseSpawner<Rock>
     {
         private readonly Texture2D _rockTexture;
-        private readonly ScoreManager _scoreManager;
 
         // Rock attributes - manually defined rectangles for each rock type
         private readonly Rectangle[] _rockRects = new Rectangle[]
@@ -32,11 +31,8 @@ namespace Dredge_lung_test
             new Vector2(0.5f, 0.5f)    // Rock type 5
         };
 
-        public RockSpawner(List<Rock> rocks, Texture2D rockTexture, ScoreManager scoreManager)
-            : base(rocks, 3.0f, 4.0f) // baseMinSpawnTime, baseMaxSpawnTime
+        public RockSpawner(List<Rock> rocks) : base(rocks, 3.0f, 4.0f) // baseMinSpawnTime, baseMaxSpawnTime
         {
-            _rockTexture = rockTexture;
-            _scoreManager = scoreManager;
         }
 
         protected override void SpawnRandomEntity()

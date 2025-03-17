@@ -7,6 +7,9 @@ namespace Dredge_lung_test
     {
         private const string HighScoreFileName = "highscore.txt";
 
+        private static ScoreManager _instance;
+        public static ScoreManager Instance => _instance ??= new ScoreManager();
+
         // Game state properties
         private int _score;
         private int _lives;
@@ -71,12 +74,23 @@ namespace Dredge_lung_test
             }
         }
 
-        // Constructor
-        public ScoreManager(int initialLives = 3)
+        public int MaxLives => _maxLives;
+
+        // Constructor - now private for singleton pattern
+        private ScoreManager(int initialLives = 3)
         {
             _score = 0;
             _lives = initialLives;
             _maxLives = initialLives;
+            LoadHighScore();
+        }
+
+        // Method to initialize with specific lives count (called after getting instance)
+        public void Initialize(int initialLives = 3)
+        {
+            _maxLives = initialLives;
+            _lives = initialLives;
+            _score = 0;
             LoadHighScore();
         }
 

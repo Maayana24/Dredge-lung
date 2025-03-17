@@ -2,6 +2,7 @@
 
 namespace Dredge_lung_test
 {
+    //Interface for all elements drawn to keep track of layer depth
     public interface ILayerable
     {
         float LayerDepth { get; set; }

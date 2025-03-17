@@ -4,7 +4,8 @@ using System.Collections.Generic;
 
 namespace Dredge_lung_test
 {
-    public abstract class BaseSpawner<T> : IUpdatable where T : class
+    //Base class for the game's spawners to make it easy to add more in the future
+    public abstract class BaseSpawner<T> : IUpdatable where T : class //All spawners should be updatable
     {
         protected readonly List<T> _activeEntities;
         protected readonly Random _random;
@@ -30,10 +31,9 @@ namespace Dredge_lung_test
 
         public virtual void Update()
         {
-            // Update spawn timer
-            _spawnTimer += Globals.DeltaTime;
+            _spawnTimer += Globals.DeltaTime; //Updating the spawn timer
 
-            // Check if it's time to spawn a new entity
+            //Check to see if it's time to spawn a new entity
             if (_spawnTimer >= _nextSpawnTime)
             {
                 SpawnRandomEntity();
@@ -41,15 +41,12 @@ namespace Dredge_lung_test
                 _nextSpawnTime = GetRandomSpawnTime();
             }
 
-            // Update and remove entities that are out of bounds
-            UpdateActiveEntities();
+            UpdateActiveEntities(); //Update and remove entities that are out of the playeble area
         }
-
-        public virtual void OnDifficultyChanged(int level, float speedMultiplier, float spawnRateMultiplier)
+        public virtual void OnDifficultyChanged(int level, float speedMultiplier, float spawnRateMultiplier) //Changing speed and spawn time based on difficulty
         {
             _speedMultiplier = speedMultiplier;
 
-            // Decrease spawn times (faster spawning) as difficulty increases
             _currentMinSpawnTime = _baseMinSpawnTime / spawnRateMultiplier;
             _currentMaxSpawnTime = _baseMaxSpawnTime / spawnRateMultiplier;
         }
@@ -63,19 +60,17 @@ namespace Dredge_lung_test
 
         protected virtual void UpdateActiveEntities()
         {
-            // Create a list for entities to remove
-            List<T> entitiesToRemove = new List<T>();
+            List<T> entitiesToRemove = new List<T>(); //List of entities that should be removed
 
             foreach (T entity in _activeEntities)
             {
-                // Check if entity is out of bounds
+                //Removing entities that are out of playable area or inactive
                 if (IsOutOfBounds(entity) || !IsEntityActive(entity))
                 {
                     entitiesToRemove.Add(entity);
                 }
             }
 
-            // Remove entities that are out of bounds or inactive
             foreach (T entity in entitiesToRemove)
             {
                 DeactivateEntity(entity);
@@ -83,10 +78,9 @@ namespace Dredge_lung_test
             }
         }
 
-        protected bool IsOutOfBounds(T entity)
+        protected bool IsOutOfBounds(T entity) //Check if entity is out of playable area
         {
-            // Add extra margin to ensure entity is completely off-screen
-            const int margin = 200;
+            const int margin = 200; //Adding extra margin to be sure entity is completely out of playable area
             Vector2 position = GetEntityPosition(entity);
 
             return position.X < PlayableArea.X - margin ||

@@ -6,26 +6,22 @@ using System.Diagnostics;
 
 namespace Dredge_lung_test
 {
+    //Manager class to manage anomaly logic
     public class AnomalyManager
     {
         private static AnomalyManager _instance;
+        public static AnomalyManager Instance => _instance ??= new AnomalyManager();
+
         private readonly Random _random = new Random();
 
-        // Textures for each anomaly type
+        //Textures for anomalies type
         private Texture2D _extraLimbsTexture;
         private Texture2D _inflammationTexture;
 
-        public bool TexturesLoaded { get; private set; } = false;
-
-        // Constructor is private for singleton pattern
         private AnomalyManager()
         {
             LoadTextures();
         }
-
-        // Singleton instance access
-        public static AnomalyManager Instance => _instance ??= new AnomalyManager();
-
         private void LoadTextures()
         {
             _extraLimbsTexture = Globals.Content.Load<Texture2D>("Fish/ExtraLimbs");
@@ -36,27 +32,24 @@ namespace Dredge_lung_test
         {
             List<Anomaly> anomalies = new List<Anomaly>();
 
-            Rectangle sourceRect = fish.SourceRect;
+            Rectangle sourceRect = fish.SourceRect; //Using the fish source Rectangle
 
-            if (sourceRect.Width <= 0 || sourceRect.Height <= 0)
+            if (sourceRect.Width <= 0 || sourceRect.Height <= 0) //If the sourceRect in not valid create new one
             {
                 sourceRect = new Rectangle(0, 0, 100, 100);
             }
 
-            if (_random.NextDouble() < 0.4)
+            if (_random.NextDouble() < 0.4) //Chances the fish will get anomalies
             {
-                int anomalyCount = _random.Next(1, 3);
+                int anomalyCount = _random.Next(1, 2);
 
                 for (int i = 0; i < anomalyCount; i++)
                 {
                     AnomalyType selectedType = (AnomalyType)_random.Next(Enum.GetValues(typeof(AnomalyType)).Length);
                     Texture2D texture = GetTextureForAnomalyType(selectedType);
-                    Color fallbackColor = selectedType == AnomalyType.ExtraLimbs ? Color.Purple : Color.Red;
-
                     anomalies.Add(new Anomaly(selectedType, texture, sourceRect));
                 }
             }
-
             return anomalies;
         }
 
@@ -67,7 +60,7 @@ namespace Dredge_lung_test
             {
                 AnomalyType.ExtraLimbs => _extraLimbsTexture,
                 AnomalyType.Inflammation => _inflammationTexture,
-                _ => _extraLimbsTexture,
+                _ => _extraLimbsTexture, //Default is extra limbs type
             };
         }
     }
