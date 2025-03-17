@@ -20,7 +20,7 @@ namespace Dredge_lung_test
         private float _spriteWidth;
         private float _spriteHeight;
         private float _defaultY; // Store the default Y position
-        public static bool ShowCollisionRects = true;
+        public static bool ShowCollisionRects = false;
 
         // Property for ICollidable
         public Rectangle Bounds { get; private set; }
@@ -29,7 +29,7 @@ namespace Dredge_lung_test
         public Player(Vector2 position) : base(Globals.Content.Load<Texture2D>("Fish/Submarine"), position)
         {
             Speed = 400;
-            Scale = new Vector2(0.15f, 0.15f);
+            Scale = new Vector2(0.17f, 0.17f);
             Position = position;
             Direction = IM.Direction;
             _defaultY = position.Y;

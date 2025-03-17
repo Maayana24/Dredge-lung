@@ -39,7 +39,7 @@ namespace Dredge_lung_test
                 sourceRect = new Rectangle(0, 0, 100, 100);
             }
 
-            if (_random.NextDouble() < 0.4) //Chances the fish will get anomalies
+            if (_random.NextDouble() < 0.6) //Chances the fish will get anomalies
             {
                 int anomalyCount = _random.Next(1, 2);
 

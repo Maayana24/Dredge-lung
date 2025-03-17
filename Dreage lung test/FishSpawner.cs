@@ -63,7 +63,7 @@ namespace Dredge_lung_test
 
             float adjustedSpeed = 120 * _speedMultiplier; //Change speed based on speed multiplier
 
-            Fish jelly = new Fish("Jelly", position, adjustedSpeed, sourceRect, new Vector2(0.5f, 0.5f), new Vector2(0, -1));
+            Fish jelly = new Fish("Jelly", position, adjustedSpeed, sourceRect, new Vector2(0.4f, 0.4f), new Vector2(0, -1));
             _activeEntities.Add(jelly);
         }
 
@@ -72,15 +72,15 @@ namespace Dredge_lung_test
             switch (fishType)
             {
                 case 0:
-                    return ("Grouper", new Rectangle(275, 50, 175, 105), new Vector2(0.6f, 0.6f), 150);
+                    return ("Grouper", new Rectangle(275, 50, 175, 105), new Vector2(0.45f, 0.45f), 150);
                 case 1:
                     return ("Angler", new Rectangle(600, 10, 250, 175), new Vector2(0.5f, 0.5f), 180);
                 case 2:
-                    return ("Eel", new Rectangle(450, 250, 350, 200), new Vector2(0.5f, 0.5f), 220);
+                    return ("Eel", new Rectangle(450, 250, 350, 200), new Vector2(0.37f, 0.37f), 220);
                 case 3:
-                    return ("Shark", new Rectangle(150, 550, 600, 200), new Vector2(0.3f, 0.3f), 100);
+                    return ("Shark", new Rectangle(150, 550, 600, 200), new Vector2(0.4f, 0.4f), 100);
                 default:
-                    return ("Grouper", new Rectangle(275, 50, 175, 105), new Vector2(0.6f, 0.6f), 150);
+                    return ("Grouper", new Rectangle(275, 50, 175, 105), new Vector2(0.45f, 0.45f), 150);
             }
         }
 

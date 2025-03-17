@@ -31,7 +31,7 @@ namespace Dredge_lung_test
         private float _length;
         private float _maxLength;
         private Fish _caughtFish;
-        private bool _showCollisionRect = true;
+        private bool _showCollisionRect = false;
         private Rectangle _collisionRect;
         private float _tipSize = 10f; // Size of the harpoon tip for collision
 
