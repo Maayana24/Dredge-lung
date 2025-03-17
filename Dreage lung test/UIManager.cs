@@ -4,12 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
+//Class to manage the game's UI
 namespace Dredge_lung_test
 {
-    //Singleton class to manage the game's UI
     public class UIManager : IUpdatable, IDrawable
     {
-        //Gets the singleton instance
         private static UIManager _instance;
         public static UIManager Instance => _instance ??= new UIManager();
 

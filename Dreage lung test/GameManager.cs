@@ -34,7 +34,7 @@ namespace Dredge_lung_test
         public GameManager()
         {
             //Load the global resources
-            Globals.Font = Globals.Content.Load<SpriteFont>("Fonts/Defult"); //SPELLING
+            Globals.Font = Globals.Content.Load<SpriteFont>("Fonts/Defult");
             song = Globals.Content.Load<Song>("Audio/Drowned");
 
             MediaPlayer.Play(song);

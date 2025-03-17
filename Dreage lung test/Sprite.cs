@@ -4,6 +4,7 @@ using System;
 
 namespace Dredge_lung_test
 {
+    //Base class for every sprite in the game
     public abstract class Sprite : ILayerable, IUpdatable, IDrawable
     {
         public readonly Texture2D Texture;
@@ -33,9 +34,8 @@ namespace Dredge_lung_test
 
         public virtual void UpdateLayerDepth()
         {
-            // Convert ZIndex to layer depth (0.0-1.0 range)
-            // Higher ZIndex = lower layer depth (closer to 1.0)
-            // Lower ZIndex = higher layer depth (closer to 0.0)
+            //Convert the ZIndex to layer depth in 0.0-1.0 range
+            //Higher ZIndex = lower layer depth and lower ZIndex = higher layer depth
             LayerDepth = MathHelper.Clamp(1.0f - (ZIndex / 100.0f), 0.0f, 1.0f);
         }   
         public abstract void Update();
