@@ -10,19 +10,22 @@ namespace Dredge_lung_test
         private ScoreManager _scoreManager => ScoreManager.Instance;
         public bool IsHarpoonFiring { get; set; }
 
-        private Vector2 _velocity = Vector2.Zero;
-        private Vector2 _acceleration = Vector2.Zero;
-        private float _accelerationRate = 600;
-        private float _frictionRate = 500;
-        private float _returnSpeed = 50; // How quickly to return to default Y
+        private Vector2 _velocity = Vector2.Zero; //Current speed
+        private Vector2 _acceleration = Vector2.Zero; 
+        private float _accelerationRate = 600; //Acceleration applied when moving left or right
+        private float _frictionRate = 500; //Force applied when there's no input to slow the player
+        private float _returnSpeed = 50; //How quickly to return to default Y
+
         private bool _isReturning = false;
         private bool _isAtDefaultPosition = false;
+        private float _defaultY; //Default Y position for the player to return when not moving vertically
+
+
         private float _spriteWidth;
         private float _spriteHeight;
-        private float _defaultY; // Store the default Y position
-        public static bool ShowCollisionRects = false;
 
-        // Property for ICollidable
+        public static bool ShowCollisionRects = false; //Debug
+
         public Rectangle Bounds { get; private set; }
         public bool IsActive { get; private set; } = true;
 
@@ -36,12 +39,10 @@ namespace Dredge_lung_test
             _spriteWidth = Texture.Width * Scale.X;
             _spriteHeight = Texture.Height * Scale.Y;
 
-            ZIndex = 10; // Lower number = higher in the visual stack
+            ZIndex = 10;
             UpdateLayerDepth();
 
-            // Register with collision manager
             CollisionManager.Instance.Register(this);
-
         }
 
         public override void Update()
@@ -53,29 +54,25 @@ namespace Dredge_lung_test
 
         private void Movement()
         {
-            // [Movement code remains unchanged, as it was not affected by collision system]
             Vector2 inputDirection = IM.Direction;
 
-            // Check if harpoon is firing - if so, restrict movement
+            //Restrict movement if harpoon is firing
             if (IsHarpoonFiring)
             {
-                // Disable horizontal movement completely
-                _acceleration.X = 0;
+                _acceleration.X = 0; // Disable horizontal movement
 
-                // Apply horizontal friction to gradually stop
+                //Apply horizontal friction to gradually stop
                 if (_velocity.X != 0)
                 {
                     float frictionX = Math.Sign(_velocity.X) * _frictionRate * Globals.DeltaTime;
 
-                    // Ensure we don't overshoot zero
-                    if (Math.Abs(frictionX) > Math.Abs(_velocity.X))
+                    if (Math.Abs(frictionX) > Math.Abs(_velocity.X)) //To not overshoot zero
                         _velocity.X = 0;
                     else
                         _velocity.X -= frictionX;
                 }
-
-                // Disable vertical input but allow return to default Y
-                inputDirection.Y = 0;
+                
+                inputDirection.Y = 0; //Disable vertical input but still allow return to default Y
             }
 
             // Handle vertical movement with W and S keys - only if not firing

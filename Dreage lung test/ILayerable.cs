@@ -6,7 +6,7 @@ namespace Dredge_lung_test
     public interface ILayerable
     {
         float LayerDepth { get; set; }
-        int ZIndex { get; set; }
+        int ZIndex { get; set; } //For layer priority 
         void UpdateLayerDepth();
     }
 }

@@ -22,19 +22,17 @@ namespace Dredge_lung_test
             //Update the cursor position
             Cursor = new Rectangle(_currentMouseState.Position.X, _currentMouseState.Position.Y, 1, 1);
 
-            //Updating all the keyboard inputs
-            //ADD WS
+            //Updating keyboard inputs
             var keyboardState = Keyboard.GetState();
             _direction = Vector2.Zero;
             if (keyboardState.IsKeyDown(Keys.A)) _direction.X--;
             if (keyboardState.IsKeyDown(Keys.D)) _direction.X++;
 
             //Checking mouse clicks
-            MouseClicked = (_currentMouseState.LeftButton == ButtonState.Pressed) &&
-                           (_lastMouseState.LeftButton == ButtonState.Released);
+            MouseClicked = (_currentMouseState.LeftButton == ButtonState.Pressed) && (_lastMouseState.LeftButton == ButtonState.Released);
         }
 
-        public static bool IsKeyPressed(Keys key) //WIP
+        public static bool IsKeyPressed(Keys key)
         {
             return Keyboard.GetState().IsKeyDown(key);
         }

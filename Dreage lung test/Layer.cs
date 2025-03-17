@@ -3,19 +3,20 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Dredge_lung_test
 {
+    //Represents a layer of the parallax background
     public class Layer : ILayerable, IDrawable
     {
         private readonly Texture2D Texture;
         public float LayerDepth { get; set; } = 0.1f;
         public int ZIndex { get; set; } = 0;
 
+        //Two copies for smoother movement
         private Vector2 Position;
         private Vector2 Position2;
 
-
         private readonly float _depth;
 
-        private readonly float _moveScale;
+        private readonly float _moveScale; //Speed of the layer movement
 
         public Layer(Texture2D texture, float depth, float moveScale)
         {
@@ -29,25 +30,23 @@ namespace Dredge_lung_test
         public void Update(float movement)
         {
             Position.Y += movement * _moveScale * Globals.DeltaTime;
-            Position.Y %= Texture.Height;
+            Position.Y %= Texture.Height; //Keep the Y position within the texture bounds
 
-            if(Position.Y >= 0)
+            if (Position.Y >= 0) 
             {
-                Position2.Y = Position.Y - Texture.Height;
+                Position2.Y = Position.Y - Texture.Height; //Position the second texture above the first one when moving down
             }
             else
             {
-                Position2.Y = Position.Y + Texture.Height;
+                Position2.Y = Position.Y + Texture.Height; //Position the second texture below the first one when moving up
             }
         }
 
        public void UpdateLayerDepth()
-{
-    // Layer depth is already set by the _depth parameter in constructor
-    // You might want to adjust based on ZIndex if needed
-    LayerDepth = _depth + (ZIndex / 100.0f);
-    LayerDepth = MathHelper.Clamp(LayerDepth, 0.0f, 1.0f);
-}
+       {
+         LayerDepth = _depth + (ZIndex / 100.0f);
+         LayerDepth = MathHelper.Clamp(LayerDepth, 0.0f, 1.0f);
+       }
 
         public void Draw()
         {

@@ -35,9 +35,9 @@ namespace Dredge_lung_test
         {
             //Load the global resources
             Globals.Font = Globals.Content.Load<SpriteFont>("Fonts/Defult"); //SPELLING
-            song = Globals.Content.Load<Song>("Audio/Drowned"); //MOVE TO GLOBALS
+            song = Globals.Content.Load<Song>("Audio/Drowned");
 
-            MediaPlayer.Play(song); //WIP
+            MediaPlayer.Play(song);
             MediaPlayer.IsRepeating = true;
 
             //Initializing the lists
@@ -46,7 +46,7 @@ namespace Dredge_lung_test
             _updatables = new List<IUpdatable>();
             _drawables = new List<IDrawable>();
 
-            _scoreManager.GameOver += OnGameOver; //WIP
+            _scoreManager.GameOver += OnGameOver;
 
             //Initializing the UI after fonts
             _uiManager.SetUpUI();
@@ -139,8 +139,7 @@ namespace Dredge_lung_test
             UpdateEntities(_rocks);
         }
 
-        //WIP
-        private void UpdateHarpoonCooldownUI()
+        private void UpdateHarpoonCooldownUI() //Updating the harpoon cooldown text
         {
             if (_harpoon.IsInCooldown)
             {

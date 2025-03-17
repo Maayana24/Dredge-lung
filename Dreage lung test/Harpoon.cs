@@ -2,10 +2,11 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Dredge_lung_test
 {
-    public enum HarpoonState
+    public enum HarpoonState //Enum for harpoon states
     {
         Ready,
         Firing,
@@ -15,7 +16,6 @@ namespace Dredge_lung_test
 
     public class Harpoon : Sprite, ICollidable
     {
-        // References
         private readonly Player _player;
         private readonly List<Fish> _fishes;
         private ScoreManager _scoreManager => ScoreManager.Instance;
@@ -25,7 +25,6 @@ namespace Dredge_lung_test
         public bool IsInCooldown => State == HarpoonState.Cooldown;
         public bool IsActive => State == HarpoonState.Firing || State == HarpoonState.Retracting;
 
-        // Harpoon properties
         private Vector2 _origin;
         private Vector2 _tip;
         private float _length;
@@ -33,45 +32,40 @@ namespace Dredge_lung_test
         private Fish _caughtFish;
         private bool _showCollisionRect = false;
         private Rectangle _collisionRect;
-        private float _tipSize = 10f; // Size of the harpoon tip for collision
+        private float _tipSize = 10f; //Size of the harpoon tip for collision
 
-        // Cached pixel texture for drawing
-        private readonly Texture2D _pixelTexture;
+        private readonly Texture2D _pixelTexture; //Pixel texture for drawing
 
-        // Constants
         private readonly float _harpoonThickness = 3f;
         private readonly Color _harpoonColor = Color.Black;
-        private readonly float _harpoonLayer = 0.85f;
 
-        public Harpoon(Player player, List<Fish> fishes)
-            : base(new Texture2D(Globals.GraphicsDevice, 1, 1), player.Position)
+        public Harpoon(Player player, List<Fish> fishes) : base(new Texture2D(Globals.GraphicsDevice, 1, 1), player.Position)
         {
             _player = player;
             _fishes = fishes;
             _origin = player.Position;
             _length = 0f;
-            _maxLength = 400; // Maximum range
-            Speed = 300; // Speed of the harpoon
+            _maxLength = 400; //Maximum range
+            Speed = 300; //Speed of the harpoon
             State = HarpoonState.Ready;
             CooldownTimer = 0f;
-            CooldownDuration = 3f; // 3 second Cooldown
+            CooldownDuration = 3f; //3 second Cooldown
             _caughtFish = null;
 
-            ZIndex = _player.ZIndex + 1;
+            ZIndex = _player.ZIndex + 1; //Slightly below player
             UpdateLayerDepth();
 
-            // Create pixel texture once
+            //Creating pixel texture
             _pixelTexture = new Texture2D(Globals.GraphicsDevice, 1, 1);
             _pixelTexture.SetData(new[] { Color.White });
 
-            // Initialize collision rectangle
+            //Initialize collision rectangle
             _collisionRect = new Rectangle(0, 0, (int)_tipSize, (int)_tipSize);
             Bounds = _collisionRect;
         }
 
         public override void Update()
         {
-            // Handle Cooldown first
             if (State == HarpoonState.Cooldown)
             {
                 _player.IsHarpoonFiring = false;
@@ -82,55 +76,51 @@ namespace Dredge_lung_test
                     State = HarpoonState.Ready;
                     CooldownTimer = 0f;
                 }
-                return; // Skip the rest of the update if in Cooldown
+                return; //Skip the rest of Update if in cooldown
             }
 
-            // Update origin position based on player position
-            _origin = new Vector2(_player.Bounds.X + _player.Bounds.Width / 2f, _player.Bounds.Y + _player.Bounds.Height / 1.3f);
+            _origin = new Vector2(_player.Bounds.X + _player.Bounds.Width / 2f, _player.Bounds.Y + _player.Bounds.Height / 1.3f); //Update origin position based on player position
 
-            // Update direction based on mouse position if in Ready state
             if (State == HarpoonState.Ready)
             {
                 UpdateAiming();
 
-                // Fire harpoon on click
+                //Fire harpoon on click
                 if (IM.MouseClicked)
                 {
                     Fire();
                 }
             }
-            // Handle Firing state
             else if (State == HarpoonState.Firing)
             {
                 _length += Speed * Globals.DeltaTime;
                 UpdateTipPosition();
 
-                // Check if max length reached
+                //Check if reached max length then retract
                 if (_length >= _maxLength)
                 {
                     State = HarpoonState.Retracting;
                 }
             }
-            // Handle Retracting state
             else if (State == HarpoonState.Retracting)
             {
-                _length -= Speed * 1.8f * Globals.DeltaTime; // Retract faster
+                _length -= Speed * 1.8f * Globals.DeltaTime; //Retract faster then firing
                 UpdateTipPosition();
 
-                // Update caught fish position if any
+                //Update caught fish position
                 if (_caughtFish != null)
                 {
                     _caughtFish.Position = _tip;
                 }
 
-                // Check if fully retracted
+                //Check if fully retracted
                 if (_length <= 0)
                 {
                     _length = 0;
                     UnregisterFromCollisionManager();
                     State = HarpoonState.Cooldown;
 
-                    // Process caught fish
+                    //Process caught fish
                     if (_caughtFish != null)
                     {
                         ProcessCaughtFish();
@@ -141,33 +131,31 @@ namespace Dredge_lung_test
 
         private void UpdateAiming()
         {
-            // Get mouse position
             Vector2 mousePos = IM.MousePosition;
 
-            // Calculate direction vector from player to mouse
-            Vector2 dirToMouse = mousePos - _origin;
+            Vector2 dirToMouse = mousePos - _origin; //Calculate direction from player to mouse
 
-            // Avoid division by zero
+            //Avoid division by zero
             if (dirToMouse.Length() > 0)
             {
                 dirToMouse.Normalize();
             }
             else
             {
-                dirToMouse = new Vector2(1, 0); // Default direction
+                dirToMouse = new Vector2(1, 0); //Default direction
                 return;
             }
 
-            // Restrict to bottom half-circle (y ≥ 0 in player's local space)
+            //Restrict to the bottom of the player in half-circle
             if (dirToMouse.Y < 0)
             {
-                // If pointing above horizon, clamp to horizon
+                //If pointing above horizon, clamp to horizon
                 if (dirToMouse.X > 0)
                     dirToMouse = new Vector2(1, 0);
                 else if (dirToMouse.X < 0)
                     dirToMouse = new Vector2(-1, 0);
                 else
-                    dirToMouse = new Vector2(1, 0); // Default if directly above
+                    dirToMouse = new Vector2(1, 0); //Default if directly above
             }
 
             Direction = dirToMouse;
@@ -179,31 +167,25 @@ namespace Dredge_lung_test
             {
                 State = HarpoonState.Firing;
                 _player.IsHarpoonFiring = true;
-                _length = 0f;  // Start with zero length
+                _length = 0f;  //Start with zero length
                 _caughtFish = null;
-                UpdateTipPosition(); // Update tip position immediately
-
-                // Register with collision manager when firing
-                RegisterWithCollisionManager();
+                UpdateTipPosition(); //Update tip position
+             
+                RegisterWithCollisionManager(); //Register with collision manager when firing
             }
         }
 
         private void UpdateTipPosition()
         {
             _tip = _origin + Direction * _length;
-            Position = _tip; // Update the sprite position to the tip
+            Position = _tip; //Update the sprite position to the tip
             UpdateCollisionRect();
         }
 
         private void UpdateCollisionRect()
         {
-            _collisionRect = new Rectangle(
-                (int)(_tip.X - _tipSize / 2),
-                (int)(_tip.Y - _tipSize / 2),
-                (int)_tipSize,
-                (int)_tipSize
-            );
-            Bounds = _collisionRect; // Update the sprite bounds
+            _collisionRect = new Rectangle((int)(_tip.X - _tipSize / 2), (int)(_tip.Y - _tipSize / 2), (int)_tipSize, (int)_tipSize);
+            Bounds = _collisionRect;
         }
 
         private void RegisterWithCollisionManager()
@@ -218,20 +200,18 @@ namespace Dredge_lung_test
 
         public void OnCollision(ICollidable other)
         {
-            // Only process collision if in Firing state
-            if (State != HarpoonState.Firing) return;
+            if (State != HarpoonState.Firing) return; // Only process collision if Firing 
 
-            // Handle collision with fish
+            //Collision with fish
             if (other is Fish fish && _caughtFish == null)
             {
                 _caughtFish = fish;
                 State = HarpoonState.Retracting;
             }
 
-            // Handle collision with rock
+            //Retract when hitting a rock
             if (other is Rock)
             {
-                // Optionally, have the harpoon bounce off rocks
                 State = HarpoonState.Retracting;
             }
         }
@@ -242,19 +222,16 @@ namespace Dredge_lung_test
 
             if (_caughtFish != null)
             {
-                // Determine if the fish has anomalies
-                bool hasAnomalies = _caughtFish.HasAnomalies;
+                bool hasAnomalies = _caughtFish.HasAnomalies; //Check if the fish has anomalies
 
-                // Award points or deduct lives
+                //Add a point if caught fish has anomalies
                 if (hasAnomalies)
                 {
                     _scoreManager.AddPoints(1);
                 }
 
-                // Fish should deactivate itself (unregister from CollisionManager)
-                _caughtFish.Deactivate();
+                _caughtFish.Deactivate(); //After caught deactivate the fish
 
-                // Remove the fish from the game
                 _fishes.Remove(_caughtFish);
                 _caughtFish = null;
             }
@@ -262,33 +239,31 @@ namespace Dredge_lung_test
 
         public override void UpdateLayerDepth()
         {
-            base.UpdateLayerDepth(); // Use base implementation that uses ZIndex
+            base.UpdateLayerDepth();
 
-            // You can add additional adjustments if needed
             LayerDepth = MathHelper.Clamp(LayerDepth, 0.0f, 1.0f);
         }
 
         public override void Draw()
         {
-            // Don't draw anything if in Cooldown state
+            //Don't draw if in Cooldown state
             if (State == HarpoonState.Cooldown)
                 return;
 
-            // Don't draw if in Ready state with no aim
+            //Don't draw if in Ready state with no aim
             if (State == HarpoonState.Ready && Direction == Vector2.Zero)
                 return;
 
-            // Calculate the line's start and end points
+            //Start and end of harpoon line
             Vector2 start = _origin;
-            Vector2 end = State == HarpoonState.Ready
-                ? _origin + Direction * 50 // Show aim line
-                : _tip;
+            //End of harpoon if ready should change with direction and should be at the tip in any other state
+            Vector2 end = State == HarpoonState.Ready ? _origin + Direction * 50 : _tip;
 
-            // Calculate the line length and angle
+            //Calculate the line length and angle
             float lineLength = Vector2.Distance(start, end);
             float angle = (float)Math.Atan2(Direction.Y, Direction.X);
 
-            // Draw the line
+            //Draw the line
             Globals.SpriteBatch.Draw(
                 _pixelTexture,
                 start,
@@ -301,7 +276,7 @@ namespace Dredge_lung_test
                 LayerDepth
             );
 
-            // Draw a slightly larger tip at the end of the harpoon
+            //Slightly larger tip at the end
             if (State != HarpoonState.Ready)
             {
                 Globals.SpriteBatch.Draw(
@@ -316,7 +291,7 @@ namespace Dredge_lung_test
                     LayerDepth
                 );
 
-                // Draw collision rectangle for debugging
+                //Collision rectangle for debugging
                 if (_showCollisionRect)
                 {
                     DebugRenderer.DrawRectangle(_collisionRect, Color.Yellow, LayerDepth + 0.01f);
