@@ -9,55 +9,44 @@ namespace Dredge_lung_test
     {
         private readonly Texture2D _rockTexture;
 
-        // Rock attributes - manually defined rectangles for each rock type
+        //Manually defined rectangles for each rock type
         private readonly Rectangle[] _rockRects = new Rectangle[]
         {
-            new Rectangle(1225, 160, 400, 115),    // Rock type 0
-            new Rectangle(1225, 535, 400, 140),    // Rock type 1
-            new Rectangle(765, 628, 240, 117),     // Rock type 2
-            new Rectangle(670, 905, 480, 145),     // Rock type 3
-            new Rectangle(1320, 895, 300, 120),    // Rock type 4
-            new Rectangle(1150, 1320, 600, 200)    // Rock type 5
+            new Rectangle(1225, 160, 400, 115),
+            new Rectangle(1225, 535, 400, 140),
+            new Rectangle(765, 628, 240, 117),
+            new Rectangle(670, 905, 480, 145),
+            new Rectangle(1320, 895, 300, 120),
+            new Rectangle(1150, 1320, 600, 200)
         };
 
-        // Scale variations for different rock types
+        //Scale for each rock types
         private readonly Vector2[] _rockScales = new Vector2[]
         {
-            new Vector2(0.6f, 0.6f),   // Rock type 0
-            new Vector2(0.57f, 0.57f), // Rock type 1
-            new Vector2(0.5f, 0.5f),   // Rock type 2
-            new Vector2(0.5f, 0.5f),   // Rock type 3
-            new Vector2(0.5f, 0.5f),   // Rock type 4
-            new Vector2(0.5f, 0.5f)    // Rock type 5
+            new Vector2(0.6f, 0.6f),
+            new Vector2(0.57f, 0.57f),
+            new Vector2(0.5f, 0.5f),
+            new Vector2(0.5f, 0.5f),
+            new Vector2(0.5f, 0.5f),
+            new Vector2(0.5f, 0.5f)
         };
 
-        public RockSpawner(List<Rock> rocks) : base(rocks, 3.0f, 4.0f) // baseMinSpawnTime, baseMaxSpawnTime
+        public RockSpawner(List<Rock> rocks) : base(rocks, 3.0f, 4.0f) //baseMinSpawnTime, baseMaxSpawnTime
         {
         }
 
         protected override void SpawnRandomEntity()
         {
-            // Choose a random rock type (0-5)
             int rockType = _random.Next(6);
+            
+            float xPos = _random.Next(PlayableArea.X, PlayableArea.X + PlayableArea.Width); //Spawn at random x position inside the playable area
 
-            // Spawn at random x position within the playable area
-            float xPos = _random.Next(PlayableArea.X, PlayableArea.X + PlayableArea.Width);
+            Vector2 position = new Vector2(xPos, PlayableArea.Y + PlayableArea.Height + 100); //Position rocks to spawn from bottom of the screen
 
-            // Position rocks to spawn from bottom of the screen
-            Vector2 position = new Vector2(xPos, PlayableArea.Y + PlayableArea.Height + 100);
-
-            // Apply speed multiplier to the base speed
             float adjustedSpeed = 150 * _speedMultiplier;
 
-            // Create the rock with the determined parameters
-            Rock rock = new Rock(
-                _rockTexture,
-                position,
-                adjustedSpeed,
-                _rockRects[rockType],
-                _rockScales[rockType],
-                new Vector2(0, -1) // Direction is upward
-            );
+            //Create the rock with the chosen attributes
+            Rock rock = new Rock(_rockTexture, position, adjustedSpeed, _rockRects[rockType], _rockScales[rockType], new Vector2(0, -1));
 
             _activeEntities.Add(rock);
         }
@@ -74,7 +63,6 @@ namespace Dredge_lung_test
 
         protected override void DeactivateEntity(Rock rock)
         {
-            // Make sure rock is deactivated (which unregisters from CollisionManager)
             rock.Deactivate();
         }
     }

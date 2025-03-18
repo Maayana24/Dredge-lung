@@ -99,7 +99,7 @@ namespace Dredge_lung_test
             return rotated;
         }
 
-        public void DrawBorderMasks() //Drawing a border mask to hide the spawning fish until they reach the playble area
+        public void DrawBorderMasks() //Drawing a border mask to hide the spawning fish until they reach the playable area
         {
             //Left side
             Globals.SpriteBatch.Draw

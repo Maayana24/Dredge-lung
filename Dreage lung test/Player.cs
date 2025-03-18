@@ -6,7 +6,7 @@ using System;
 namespace Dredge_lung_test
 {
     //Class representing the player submarine character
-    public class Player : Sprite, ICollidable, ILayerable
+    public class Player : Sprite, ICollidable
     {
         private ScoreManager _scoreManager => ScoreManager.Instance;
         public bool IsHarpoonFiring { get; set; }
@@ -190,6 +190,13 @@ namespace Dredge_lung_test
             Position = new Vector2(MathHelper.Clamp(Position.X, 0, Globals.ScreenWidth - _spriteWidth), MathHelper.Clamp(Position.Y, 0, Globals.ScreenHeight - _spriteHeight));
         }
 
+        public void OnCollision(ICollidable other)
+        {
+            if (other is Rock)
+            {
+                _scoreManager.RemoveLife(); //Lose a life when colliding with rock
+            }
+        }
         public override void Draw()
         {
             Globals.SpriteBatch.Draw(Texture, Position, null, Color.White, 0, Vector2.Zero, Scale, SpriteEffects.None, LayerDepth);
@@ -198,14 +205,6 @@ namespace Dredge_lung_test
             {
                 Color debugColor = Color.Red;
                 DebugRenderer.DrawRectangle(Bounds, debugColor, LayerDepth - 0.01f);
-            }
-        }
-
-        public void OnCollision(ICollidable other)
-        {
-            if (other is Rock)
-            {
-                _scoreManager.RemoveLife(); //Lose a life when colliding with rock
             }
         }
     }

@@ -6,9 +6,9 @@ using System.Collections.Generic;
 
 namespace Dredge_lung_test
 {
+    //The main manager of the game
     public class GameManager
     {
-        //ORDER
         private List<Fish> _fishes;
         private List<Rock> _rocks;
 
@@ -152,7 +152,7 @@ namespace Dredge_lung_test
             }
         }
 
-        private void UpdateEntities<T>(List<T> entities) where T : class //for updating spawnble game objects
+        private void UpdateEntities<T>(List<T> entities) where T : class //for updating spawnable game objects
         {
             foreach (var entity in new List<T>(entities)) //Copying list to avoid exception
             {
@@ -205,9 +205,6 @@ namespace Dredge_lung_test
             }
 
             BackgroundManager.Instance.DrawBorderMasks(); //Drawing the border mask 
-
-            DebugRenderer.DrawRectangle(PlayableArea.Bounds, Color.Yellow * 0.5f, 0.9f); //Drawing debug
-
 
             //Drawing active rocks
             foreach (Rock rock in _rocks)

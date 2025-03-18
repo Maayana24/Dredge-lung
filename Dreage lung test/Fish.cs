@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Dredge_lung_test
 {
     //Class that represent the fish in the game
-    public class Fish : Sprite, ICollidable, ILayerable
+    public class Fish : Sprite, ICollidable
     {
         public Rectangle SourceRect { get; private set; }
         private Rectangle CollisionRect { get; set; }
@@ -16,8 +16,7 @@ namespace Dredge_lung_test
         public static bool ShowCollisionRects = false; //Debug
 
 
-        public Fish(string name, Vector2 position, float speed = 150, Rectangle sourceRect = default, Vector2? scale = null, Vector2? direction = null)
-        : base(Globals.Content.Load<Texture2D>("Fish/FishTemplate"), position) //All fish textures are in one sprite sheet
+        public Fish(string name, Vector2 position, float speed = 150, Rectangle sourceRect = default, Vector2? scale = null, Vector2? direction = null) : base(Globals.Content.Load<Texture2D>("Fish/FishTemplate"), position) //All fish textures are in one sprite sheet
         {
             Name = name;
             Speed = speed;
@@ -69,11 +68,19 @@ namespace Dredge_lung_test
             Bounds = CollisionRect;
         }
 
-        public Rectangle GetSourceRect()
+        public void OnCollision(ICollidable other)
         {
-            return SourceRect;
+            if (other is Rock && IsActive)
+            {
+                //Add direction change to fish when hitting a rock in the future
+            }
         }
 
+        public void Deactivate()
+        {
+            IsActive = false;
+            CollisionManager.Instance.Unregister(this);
+        }
         public override void Draw()
         {
             if (!IsActive) return;
@@ -92,20 +99,6 @@ namespace Dredge_lung_test
             {
                 DebugRenderer.DrawRectangle(CollisionRect, Color.Green, LayerDepth + 0.02f);
             }
-        }
-
-        public void OnCollision(ICollidable other)
-        {
-            if (other is Rock && IsActive)
-            {
-                //Add direction change to fish when hitting a rock in the future
-            }
-        }
-
-        public void Deactivate()
-        {
-            IsActive = false;
-            CollisionManager.Instance.Unregister(this);
         }
     }
 }

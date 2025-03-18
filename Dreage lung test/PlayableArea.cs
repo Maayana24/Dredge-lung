@@ -2,7 +2,7 @@
 
 namespace Dredge_lung_test
 {
-    //Class to manage the playble area of the game where the player can move and objects spawn
+    //Class to manage the playable area of the game where the player can move and objects spawn
     public static class PlayableArea
     {
         //Playable area dimensions

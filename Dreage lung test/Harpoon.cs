@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Dredge_lung_test
 {
@@ -13,7 +12,7 @@ namespace Dredge_lung_test
         Retracting,
         Cooldown
     }
-
+    //Representing the harpoon, the player's weapon
     public class Harpoon : Sprite, ICollidable
     {
         private readonly Player _player;
@@ -215,7 +214,6 @@ namespace Dredge_lung_test
                 State = HarpoonState.Retracting;
             }
         }
-
         private void ProcessCaughtFish()
         {
             _player.IsHarpoonFiring = false;

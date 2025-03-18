@@ -42,7 +42,7 @@ namespace Dredge_lung_test
 
         public virtual void Draw()
         {
-            Globals.SpriteBatch.Draw(Texture, Position, Bounds, Color.White, 0, Origin, Scale, SpriteEffect, 1);
+            Globals.SpriteBatch.Draw(Texture, Position, Bounds, Color.White, 0, Origin, Scale, SpriteEffect, LayerDepth);
         }
 
     }

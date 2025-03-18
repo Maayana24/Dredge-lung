@@ -4,8 +4,6 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Dredge_lung_test
 {
-
-    //READ ONLY AND ENCAPSULATION
     public class Game1 : Game
     {
         private GraphicsDeviceManager _graphics;

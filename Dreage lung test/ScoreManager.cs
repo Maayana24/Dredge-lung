@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace Dredge_lung_test
 {

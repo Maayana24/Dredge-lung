@@ -22,6 +22,7 @@ namespace Dredge_lung_test
             //Update the cursor position
             Cursor = new Rectangle(_currentMouseState.Position.X, _currentMouseState.Position.Y, 1, 1);
 
+
             //Updating keyboard inputs
             var keyboardState = Keyboard.GetState();
             _direction = Vector2.Zero;

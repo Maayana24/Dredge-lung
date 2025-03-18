@@ -36,19 +36,15 @@ namespace Dredge_lung_test
 
 
         public void Draw(Vector2 position, Vector2 scale, SpriteEffects spriteEffect, float layerDepth)
-    {
+        {
              try
              {
                 Globals.SpriteBatch.Draw(Texture, position, SourceRect, Color.White, 0, new Vector2(SourceRect.Width / 2, SourceRect.Height / 2), scale, spriteEffect, layerDepth);
-            
-                int width = (int)(SourceRect.Width * scale.X * 0.5f);
-                int height = (int)(SourceRect.Height * scale.Y * 0.5f);
-                Rectangle bounds = new Rectangle((int)(position.X - width / 2), (int)(position.Y - height / 2), width, height);
              }
              catch (Exception ex)
              {
                 Debug.WriteLine($"Error drawing anomaly: {ex.Message}");
              }
-    }
+        }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Dredge_lung_test
 {
@@ -22,7 +21,7 @@ namespace Dredge_lung_test
             _collidables.Remove(collidable);
         }
 
-        public void CheckCollisions() //Checking collision for all collidable objects
+        public void CheckCollisions() //Checking collision between  all collidable objects
         {
             List<ICollidable> activeCollidables = new List<ICollidable>();
 
